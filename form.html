@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <form action="" method="post">
+      <div>
+        <label for="first-name">What is your first name?</label
+        ><input type="text" id="first-name" name="firstName" required />
+      </div>
+      <div>
+        <label for="last-name">What is your last name?</label
+        ><input type="text" id="last-name" name="lastName" required />
+      </div>
+      <div>
+        <label for="email">What is your email?</label
+        ><input type="email" id="email" name="email" required />
+      </div>
+      <div>
+        <label for="phone">What is your phone number?</label
+        ><input type="tel" id="phone" name="phoneNumber" required />
+      </div>
+      <div>
+        <label for="gender">What is your gender?</label>
+        <select name="gender" id="gender">
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="non-binary">Non-binary</option>
+          <option value="other">Not listed above</option>
+          <option value="na">Prefer not to answer</option>
+        </select>
+      </div>
+      <div>
+        <label for="school">What school do you go to?</label
+        ><input type="text" id="school" name="school" />
+      </div>
+      <div>
+        <label for="city">What city do you live in?</label
+        ><input type="text" id="city" name="city" required />
+      </div>
+      <div>
+        <!-- TODO: Check that at least 1 is selected -->
+        <fieldset>
+          <legend>What racial or ethnic groups describe you?</legend>
+          <label for="aian">American Indian or Alaska Native</label
+          ><input type="checkbox" id="aian" name="ethnicity" value="aian" />
+          <label for="asian">Asian</label
+          ><input type="checkbox" id="asian" name="ethnicity" value="asian" />
+          <label for="black">Black or African American</label
+          ><input type="checkbox" id="black" name="ethnicity" value="black" />
+          <label for="hispanic-latino">Hispanic or Latino</label
+          ><input
+            type="checkbox"
+            id="hispanic-latino"
+            name="ethnicity"
+            value="hispanic-latino"
+          />
+          <label for="pi">Native Hawaiian or Other Pacific Islander</label
+          ><input
+            type="checkbox"
+            id="pi"
+            name="ethnicity"
+            value="pi"
+            required
+          />
+          <label for="white">White</label
+          ><input type="checkbox" id="white" name="ethnicity" value="white" />
+          <label for="ethnicity-other">Other</label
+          ><input type="text" id="ethnicity-other" name="ethnicity" />
+          <label for="ethnicity-na">Prefer not to answer</label
+          ><input type="radio" id="ethnicity-na" name="ethnicity" value="na" />
+        </fieldset>
+      </div>
+      <div>
+        <label for="dob">What is your date of birth?</label
+        ><input type="date" id="dob" name="dateOfBirth" required />
+      </div>
+      <div>
+        <fieldset>
+          <legend>Do you have any dietary restrictions?</legend>
+          <label for="vegetarian">Vegetarian</label
+          ><input
+            type="checkbox"
+            id="vegetarian"
+            name="dietary"
+            value="vegetarian"
+          />
+          <label for="vegan">Vegan</label
+          ><input type="checkbox" id="vegan" name="dietary" value="vegan" />
+          <label for="">Lactose Intolerant</label
+          ><input
+            type="checkbox"
+            id="lactose-intolerant"
+            name="dietary"
+            value="lactose-intolerant"
+          />
+          <label for="gluten-intolerant">Gluten Intolerant</label
+          ><input
+            type="checkbox"
+            id="gluten-intolerant"
+            name="dietary"
+            value="gluten-intolerant"
+          />
+          <label for="nut-allergy">Nut Allergy</label
+          ><input
+            type="checkbox"
+            id="nut-allergy"
+            name="dietary"
+            value="nut-allergy"
+          />
+          <label for="dietary-other">Other</label
+          ><input
+            type="checkbox"
+            id="dietary-other"
+            name="dietary"
+            value="other"
+          />
+        </fieldset>
+      </div>
+      <div>
+        <label for="size">What is your t-shirt size?</label>
+        <select name="size" id="size">
+          <option value="s">Small</option>
+          <option value="m">Medium</option>
+          <option value="l">Large</option>
+          <option value="xl">Extra Large</option>
+        </select>
+      </div>
+      <div>
+        <fieldset>
+          <legend>How did you hear about us?</legend>
+          <label for="contact-instagram">Instagram</label
+          ><input
+            type="checkbox"
+            id="contact-instagram"
+            name="contact"
+            value="instagram"
+          /><label for="contact-linkedin">LinkedIn</label
+          ><input
+            type="checkbox"
+            id="contact-linkedin"
+            name="contact"
+            value="linkedin"
+          /><label for="contact-twitter">Twitter</label
+          ><input
+            type="checkbox"
+            id="contact-twitter"
+            name="contact"
+            value="twitter"
+          /><label for="contact-wom">Friend/Word-of-Mouth</label
+          ><input
+            type="checkbox"
+            id="contact-wom"
+            name="contact"
+            value="wom"
+          /><label for="contact-prevhackathon">Previous Hackathon</label
+          ><input
+            type="checkbox"
+            id="contact-prevhackathon"
+            name="contact"
+            value="prevhackathon"
+          /><label for="contact-club">Club</label
+          ><input
+            type="checkbox"
+            id="contact-club"
+            name="contact"
+            value="club"
+          /><label for="contact-teacher">Teachers</label
+          ><input
+            type="checkbox"
+            id="contact-teacher"
+            name="contact"
+            value="teacher"
+          /><label for="contact-counselor">School Counselor</label
+          ><input
+            type="checkbox"
+            id="contact-counselor"
+            name="contact"
+            value="counselor"
+          />
+        </fieldset>
+      </div>
+      <div>
+        <label for="parent-first-name">What is your parent's first name?</label
+        ><input
+          type="text"
+          id="parent-first-name"
+          name="parentFirstName"
+          required
+        />
+      </div>
+      <div>
+        <label for="parent-last-name">What is your parent's last name?</label
+        ><input
+          type="text"
+          id="parent-last-name"
+          name="parentLastName"
+          required
+        />
+      </div>
+      <div>
+        <label for="parent-email">What is your parent's email?</label
+        ><input type="email" id="parent-email" name="parentEmail" required />
+      </div>
+      <div>
+        <label for="parent-phone">What is your parent's phone number?</label
+        ><input
+          type="tel"
+          id="parent-phone"
+          name="parentPhoneNumber"
+          required
+        />
+      </div>
+      <div>
+        <label for="previous-hackathons"
+          >How many hackathons have you attended in the past?</label
+        >
+        <input
+          type="number"
+          step="1"
+          min="0"
+          id="previous-hackathons"
+          name="nPreviousHackathons"
+        />
+      </div>
+      <div>
+        <label for="experience"
+          >What is your experience level as a programmer?</label
+        >
+        <select name="experience" id="experience">
+          <option value="none">None</option>
+          <option value="beginner">Beginner</option>
+          <option value="intermediate">Intermediate</option>
+          <option value="advanced">Advanced</option>
+          <option value="expert">Expert</option>
+        </select>
+      </div>
+      <div>
+        <label for="device"
+          >Will you have access to a laptop or tablet during the
+          hackathon?</label
+        >
+        <input type="checkbox" name="device" id="device" />
+        <label for="mlh"
+          >Do you want to recieve communications from our hackathon partner,
+          Major League Hacking?</label
+        >
+        <input type="checkbox" name="mlh" id="mlh" />
+      </div>
+      <div>
+        <!-- Use Dropzone for this later -->
+        <label for="resume">Resume</label
+        ><input type="file" id="resume" name="resume" />
+        <label for="github">GitHub</label
+        ><input type="text" id="github" name="github" />
+        <label for="linkedin">LinkedIn</label
+        ><input type="url" id="linkedin" name="linkedin" />
+        <label for=""></label><input type="text" id="" name="" value="" />
+      </div>
+    </form>
+  </body>
+</html>
