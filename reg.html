@@ -7,14 +7,14 @@
     <title>Document</title>
   </head>
   <body>
-    <form action="" method="post">
+    <form action="" method="post" id="registration">
       <div>
         <label for="first-name">What is your first name?</label
-        ><input type="text" id="first-name" name="firstName" required />
+        ><input type="text" id="first-name" name="first_name" required />
       </div>
       <div>
         <label for="last-name">What is your last name?</label
-        ><input type="text" id="last-name" name="lastName" required />
+        ><input type="text" id="last-name" name="last_name" required />
       </div>
       <div>
         <label for="email">What is your email?</label
@@ -22,11 +22,11 @@
       </div>
       <div>
         <label for="phone">What is your phone number?</label
-        ><input type="tel" id="phone" name="phoneNumber" required />
+        ><input type="tel" id="phone" name="phone_number" required />
       </div>
       <div>
         <label for="gender">What is your gender?</label>
-        <select name="gender" id="gender">
+        <select name="gender" id="gender" required>
           <option value="male">Male</option>
           <option value="female">Female</option>
           <option value="non-binary">Non-binary</option>
@@ -77,7 +77,7 @@
       </div>
       <div>
         <label for="dob">What is your date of birth?</label
-        ><input type="date" id="dob" name="dateOfBirth" required />
+        ><input type="date" id="dob" name="date_of_birth" required />
       </div>
       <div>
         <fieldset>
@@ -96,34 +96,29 @@
             type="checkbox"
             id="lactose-intolerant"
             name="dietary"
-            value="lactose-intolerant"
+            value="lactose_intolerant"
           />
           <label for="gluten-intolerant">Gluten Intolerant</label
           ><input
             type="checkbox"
             id="gluten-intolerant"
             name="dietary"
-            value="gluten-intolerant"
+            value="gluten_intolerant"
           />
           <label for="nut-allergy">Nut Allergy</label
           ><input
             type="checkbox"
             id="nut-allergy"
             name="dietary"
-            value="nut-allergy"
+            value="nut_allergy"
           />
           <label for="dietary-other">Other</label
-          ><input
-            type="checkbox"
-            id="dietary-other"
-            name="dietary"
-            value="other"
-          />
+          ><input type="text" id="dietary-other" name="dietary" value="other" />
         </fieldset>
       </div>
       <div>
-        <label for="size">What is your t-shirt size?</label>
-        <select name="size" id="size">
+        <label for="ize">What is your t-shirt size?</label>
+        <select name="t_shirt_size" id="size" required>
           <option value="s">Small</option>
           <option value="m">Medium</option>
           <option value="l">Large</option>
@@ -182,6 +177,8 @@
             name="contact"
             value="counselor"
           />
+          <label for="contact-other">Other</label
+          ><input type="text" id="contact-other" name="contact" />
         </fieldset>
       </div>
       <div>
@@ -189,7 +186,7 @@
         ><input
           type="text"
           id="parent-first-name"
-          name="parentFirstName"
+          name="parent_first_name"
           required
         />
       </div>
@@ -198,22 +195,17 @@
         ><input
           type="text"
           id="parent-last-name"
-          name="parentLastName"
+          name="parent_last_name"
           required
         />
       </div>
       <div>
         <label for="parent-email">What is your parent's email?</label
-        ><input type="email" id="parent-email" name="parentEmail" required />
+        ><input type="email" id="parent-email" name="parent_email" required />
       </div>
       <div>
         <label for="parent-phone">What is your parent's phone number?</label
-        ><input
-          type="tel"
-          id="parent-phone"
-          name="parentPhoneNumber"
-          required
-        />
+        ><input type="tel" id="parent-phone" name="parent_phone" required />
       </div>
       <div>
         <label for="previous-hackathons"
@@ -224,14 +216,14 @@
           step="1"
           min="0"
           id="previous-hackathons"
-          name="nPreviousHackathons"
+          name="previous_hackathons"
         />
       </div>
       <div>
         <label for="experience"
           >What is your experience level as a programmer?</label
         >
-        <select name="experience" id="experience">
+        <select name="experience" id="experience" required>
           <option value="none">None</option>
           <option value="beginner">Beginner</option>
           <option value="intermediate">Intermediate</option>
@@ -262,5 +254,6 @@
         <label for=""></label><input type="text" id="" name="" value="" />
       </div>
     </form>
+    <script src="reg.js"></script>
   </body>
 </html>
