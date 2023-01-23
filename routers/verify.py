@@ -1,3 +1,3 @@
 from fastapi import APIRouter, HTTPException
-from pyairtable import Table
-from jose import jwe
+# from jose import jwt
+from pyairtable.api.table import Table

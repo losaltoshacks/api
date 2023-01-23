@@ -11,6 +11,8 @@ requests = "*"
 pyairtable = "*"
 py3-validate-email = {git = "https://gitea.ksol.io/karolyi/py3-validate-email"}
 python-jose = {extras = ["cryptography"], version = "*"}
+passlib = {extras = ["bcrypt"], version = "*"}
+python-dotenv = "*"
 
 [dev-packages]
 
