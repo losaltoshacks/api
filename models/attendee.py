@@ -1,8 +1,33 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from pydantic.main import ModelMetaclass
 from enum import Enum
 from datetime import datetime
 from fastapi import Query
+from typing import Optional
 
+# Helper Functions ===========
+# listOfNames is an array containing the string values of an enum class, type is an Enum class
+def strToEnumList(listOfNames, type):
+    res = []
+
+    for val in listOfNames:
+        try: 
+            res.append(type(val))
+        except:
+            continue # TODO: see if this ever gets called?   
+    return res
+
+def enumListToStringVals(listOfEnums):
+    res = []
+
+    for val in listOfEnums:
+        try: 
+            res.append(val.value)
+        except:
+            continue # TODO: see if this ever gets called?   
+    return res
+
+# Enums ======================
 class Gender(str, Enum):
     male = "Male"
     female = "Female"
@@ -52,52 +77,74 @@ class Contact(str, Enum):
     counselor = "School Counselor"
     other = "other"
 
-
+# Classes ====================
 class Attendee(BaseModel):
-    airtable_id: str
-    first_name: str
-    last_name: str
-    email: str
-    phone_number: str
-    gender: Gender
-    school: str
-    city: str
-    ethnicity: list[Ethnicity]
+    airtable_id: str | None = Field(default=None, alias="id")
+    first_name: str = Field(alias="First Name")
+    last_name: str = Field(alias="Last Name")
+    email: str = Field(alias="Email")
+    phone_number: str = Field(alias="Phone")
+    gender: Gender = Field(alias="Gender")
+    school: str = Field(alias="School")
+    city: str = Field(alias="City")
+    ethnicity: list[Ethnicity] = Field(alias="Ethnicity")
     ethnicity_other: str | None = None # TODO: figure out what this refers too
-    date_of_birth: datetime
-    dietary: list[DietaryRestriction] | None = None
+    date_of_birth: datetime = Field(alias="Date of Birth")
+    dietary: list[DietaryRestriction] | None = Field(default=None, alias="Dietary Restrictions")
     dietary_other: str | None = None # TODO: figure out what this refers too
-    t_shirt_size: ShirtSize
-    contact: list[Contact]
+    t_shirt_size: ShirtSize = Field(alias="T-Shirt Size")
+    contact: list[Contact] = Field(alias="How did you hear about us?")
     contact_other: str | None = None # TODO: figure out what this refers too
-    parent_first_name: str
-    parent_last_name: str
-    parent_email: str
-    parent_phone: str
-    previous_hackathons: int
-    experience: Experience
-    device: bool
-    communications: bool
-    github: str | None = None
-    linkedin: str | None = Query(regex="^(http(s)?:\/\/)?([\w]+\.)?linkedin\.com\/(pub|in|profile)\/(.*)$", default = None)
+    parent_first_name: str = Field(alias="Parent/Guardian First Name")
+    parent_last_name: str = Field(alias="Parent/Guardian Last Name")
+    parent_email: str = Field(alias="Parent/Guardian Email Address")
+    parent_phone: str = Field(alias="Parent/Guardian Phone Number")
+    previous_hackathons: int = Field(alias="Number of Previous Hackathons Attended")
+    experience: Experience = Field(alias="Programming Experience")
+    device: bool = Field(alias="Access to Device")
+    communications: bool = Field(alias="Share info with MLH?")
+    github: str | None = Field(default=None, alias="GitHub")
+    linkedin: str | None = Query(regex="^(http(s)?:\/\/)?([\w]+\.)?linkedin\.com\/(pub|in|profile)\/(.*)$", default = None, alias="LinkedIn")
 
-    def convert_to_airtable(self):
-        # Convert ethnicity to AirTable values
-        # for i in len(self.ethnicity):
-            # match self.ethnicity[i]:
-                # case Ethnicity.aian: self.ethnicity[i] = ""
-        pass;
+    class Config:
+        allow_population_by_field_name = True
 
-# listOfNames is an array containing the string values of an enum class, type is an Enum class
-def strToEnumList(listOfNames, type):
-    res = []
+    def getAirtableFields(self):
+        fields_dict = self.dict(exclude={"airtable_id", "ethnicity_other","dietary_other","contact_other"}, by_alias=True)
+        enum_list_fields = ["Ethnicity", "Dietary Restrictions", "How did you hear about us?"]
+        for field_name in enum_list_fields:
+            if field_name in fields_dict.keys() and fields_dict[field_name] != None:
+                fields_dict[field_name] = enumListToStringVals(fields_dict[field_name])
 
-    for val in listOfNames:
-        try: 
-            res.append(type(val))
-        except:
-            continue # TODO: see if this ever gets called?   
-    return res
+        enum_fields = ["Gender", "T-Shirt Size"]
+        for field_name in enum_fields:
+            if field_name in fields_dict.keys() and fields_dict[field_name] != None:
+                fields_dict[field_name] = fields_dict[field_name].value
+        
+        if "Date of Birth" in fields_dict.keys() and fields_dict["Date of Birth"] != None:
+            fields_dict["Date of Birth"] = fields_dict["Date of Birth"].strftime("%Y-%m-%d")
+
+        return fields_dict
+    
+# metaclass for converting all parameters into optional ones
+class AllOptional(ModelMetaclass):
+    def __new__(mcls, name, bases, namespaces, **kwargs):
+        cls = super().__new__(mcls, name, bases, namespaces, **kwargs)
+        for field in cls.__fields__.values():
+            field.required=False
+        return cls
+
+# same as Attendee, but all parameters are optional
+class UpdatedAttendee(Attendee, metaclass=AllOptional):
+    # returns all fields that are not None
+    def getUpdatedAirtableFields(self):
+        fields_dict = self.getAirtableFields()
+        stripped_fields_dict = {}
+        for key, val in fields_dict.items():
+            if val != None:
+                stripped_fields_dict[key] = val
+        
+        return stripped_fields_dict
 
 def recordToAttendee(airtableRecord):
     fields = airtableRecord["fields"]
@@ -112,6 +159,7 @@ def recordToAttendee(airtableRecord):
         city=fields["City"],
         ethnicity=strToEnumList(fields["Ethnicity"], Ethnicity),
         date_of_birth= datetime.strptime(fields["Date of Birth"], '%Y-%m-%d'),
+        dietary=strToEnumList(fields["Dietary Restrictions"], DietaryRestriction),
         t_shirt_size=ShirtSize(fields["T-Shirt Size"]),
         contact=strToEnumList(fields["How did you hear about us?"], Contact),
         parent_first_name=fields["Parent/Guardian First Name"],
