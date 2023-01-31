@@ -88,13 +88,13 @@ class Attendee(BaseModel):
     school: str = Field(alias="School")
     city: str = Field(alias="City")
     ethnicity: list[Ethnicity] = Field(alias="Ethnicity")
-    ethnicity_other: str | None = None # TODO: figure out what this refers too
+    ethnicity_other: str | None = Field(default=None, alias="Other Ethnicity")
     date_of_birth: datetime = Field(alias="Date of Birth")
     dietary: list[DietaryRestriction] | None = Field(default=None, alias="Dietary Restrictions")
-    dietary_other: str | None = None # TODO: figure out what this refers too
+    dietary_other: str | None = Field(default=None, alias="Other Dietary") 
     t_shirt_size: ShirtSize = Field(alias="T-Shirt Size")
     contact: list[Contact] = Field(alias="How did you hear about us?")
-    contact_other: str | None = None # TODO: figure out what this refers too
+    contact_other: str | None = Field(default=None alias="Other Contact")
     parent_first_name: str = Field(alias="Parent/Guardian First Name")
     parent_last_name: str = Field(alias="Parent/Guardian Last Name")
     parent_email: str = Field(alias="Parent/Guardian Email Address")
@@ -171,6 +171,9 @@ def recordToAttendee(airtableRecord):
         device="Access to Device" in fields.keys(),
         communications="Share info with MLH?" in fields.keys(),
         github=(fields["GitHub"] if "GitHub" in fields.keys() else None),
-        linkedin=(fields["LinkedIn"] if "LinkedIn" in fields.keys() else None)
+        linkedin=(fields["LinkedIn"] if "LinkedIn" in fields.keys() else None),
+        ethnicity_other=(fields["Other Ethnicity"] if "Other Ethnicity" in fields.keys() else None),
+        dietary_other=(fields["Other Dietary"] if "Other Dietary" in fields.keys() else None),
+        contact_other=(fields["Other Contact"] if "Other Contact" in fields.keys() else None)
     )
 
