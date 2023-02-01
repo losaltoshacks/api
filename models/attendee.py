@@ -27,6 +27,13 @@ def enumListToStringVals(listOfEnums):
     return res
 
 # Enums ======================
+class Grade(str, Enum):
+    eighth = "8th Grade"
+    ninth = "9th Grade"
+    tenth = "10th Grade"
+    eleventh = "11th Grade"
+    twelveth = "12th Grade"
+
 class Gender(str, Enum):
     male = "Male"
     female = "Female"
@@ -35,17 +42,16 @@ class Gender(str, Enum):
     na = "Prefer not to answer"
 
 class ShirtSize(str, Enum):
-    small = "S"
-    medium = "M"
-    large = "L"
-    extra_large = "XL"
+    small = "Small (S)"
+    medium = "Medium (M)"
+    large = "Large (L)"
+    extra_large = "Extra Large (XL)"
 
 class Experience(str, Enum):
     none = "None"
-    beginner = "Beginner (< 6 months)"
-    intermediate = "Intermediate (< 2 years)"
-    advanced = "Advanced (< 5 years)"
-    expert = "Expert (> 5 years)"
+    beginner = "Beginner (< 1 year)"
+    intermediate = "Intermediate (1 to 2 years)"
+    advanced = "Advanced (3+ years)"
 
 class Ethnicity(str, Enum):
     aian = "American Indian or Alaska Native"
@@ -54,16 +60,14 @@ class Ethnicity(str, Enum):
     hispanic_latino = "Hispanic or Latino"
     pacific_islander = "Native Hawaiian or Other Pacific Islander"
     white = "White"
-    other = "other"
-    na = ""
+    na = "Prefer not to answer"
 
 class DietaryRestriction(str, Enum):
     vegetarian = "Vegetarian"
     vegan = "Vegan"
     lactose_intolerant = "Lactose Intolerant"
     gluten_intolerant = "Gluten Intolerant"
-    nut_allergy = "Nut allergy"
-    other = "Other"
+    nut_allergy = "Nut Allergy"
 
 class Contact(str, Enum):
     instagram = "Instagram"
@@ -74,36 +78,33 @@ class Contact(str, Enum):
     club = "Club"
     teacher = "Teachers"
     counselor = "School Counselor"
-    other = "other"
 
 # Classes ====================
 class Attendee(BaseModel):
     airtable_id: str | None = Field(default=None, alias="id")
-    first_name: str = Field(alias="First Name")
-    last_name: str = Field(alias="Last Name")
-    email: str = Field(alias="Email")
-    phone_number: str = Field(alias="Phone")
-    gender: Gender = Field(alias="Gender")
-    school: str = Field(alias="School")
-    city: str = Field(alias="City")
-    ethnicity: list[Ethnicity] = Field(alias="Ethnicity")
-    ethnicity_other: str | None = Field(default=None, alias="Other Ethnicity")
-    date_of_birth: datetime = Field(alias="Date of Birth")
-    dietary: list[DietaryRestriction] | None = Field(default=None, alias="Dietary Restrictions")
-    dietary_other: str | None = Field(default=None, alias="Other Dietary") 
-    t_shirt_size: ShirtSize = Field(alias="T-Shirt Size")
+    age: int = Field(alias="Age")
     contact: list[Contact] = Field(alias="How did you hear about us?")
     contact_other: str | None = Field(default=None, alias="Other Contact")
-    parent_first_name: str = Field(alias="Parent/Guardian First Name")
-    parent_last_name: str = Field(alias="Parent/Guardian Last Name")
-    parent_email: str = Field(alias="Parent/Guardian Email Address")
-    parent_phone: str = Field(alias="Parent/Guardian Phone Number")
-    previous_hackathons: int = Field(alias="Number of Previous Hackathons Attended")
+    dietary_restrictions: list[DietaryRestriction] | None = Field(default=None, alias="Dietary Restrictions")
+    dietary_restrictions_other: str | None = Field(default=None, alias="Other Dietary") 
+    email: str = Field(alias="Email")
+    ethnicity: list[Ethnicity] = Field(alias="Ethnicity")
+    ethnicity_other: str | None = Field(default=None, alias="Other Ethnicity")
     experience: Experience = Field(alias="Programming Experience")
-    device: bool = Field(alias="Access to Device")
-    communications: bool = Field(alias="Share info with MLH?")
+    first_name: str = Field(alias="First Name")
+    gender: Gender = Field(alias="Gender")
     github: str | None = Field(default=None, alias="GitHub")
+    grade: Grade = Field(alias="Grade")
+    hackathons: int = Field(alias="Number of Previous Hackathons Attended")
+    last_name: str = Field(alias="Last Name")
     linkedin: str | None = Query(regex="^(http(s)?:\/\/)?([\w]+\.)?linkedin\.com\/(pub|in|profile)\/(.*)$", default = None, alias="LinkedIn")
+    parent_email: str = Field(alias="Parent/Guardian Email Address")
+    parent_name: str = Field(alias="Parent/Guardian First Name")
+    parent_tel: str = Field(alias="Parent/Guardian Phone Number")
+    school_name: str = Field(alias="School")
+    school_place_id: str = Field(alias="School Place ID")
+    shirt_size: ShirtSize = Field(alias="T-Shirt Size")
+    tel: str = Field(alias="Phone")
 
     class Config:
         allow_population_by_field_name = True
@@ -115,14 +116,11 @@ class Attendee(BaseModel):
             if field_name in fields_dict.keys() and fields_dict[field_name] != None:
                 fields_dict[field_name] = enumListToStringVals(fields_dict[field_name])
 
-        enum_fields = ["Gender", "T-Shirt Size"]
+        enum_fields = ["Gender", "Gender", "T-Shirt Size"]
         for field_name in enum_fields:
             if field_name in fields_dict.keys() and fields_dict[field_name] != None:
                 fields_dict[field_name] = fields_dict[field_name].value
         
-        if "Date of Birth" in fields_dict.keys() and fields_dict["Date of Birth"] != None:
-            fields_dict["Date of Birth"] = fields_dict["Date of Birth"].strftime("%Y-%m-%d")
-
         return fields_dict
     
 # metaclass for converting all parameters into optional ones
@@ -149,30 +147,28 @@ def recordToAttendee(airtableRecord):
     fields = airtableRecord["fields"]
     return Attendee(
         airtable_id=airtableRecord["id"],
-        first_name=fields["First Name"],
-        last_name=fields["Last Name"],
-        email=fields["Email"],
-        phone_number=fields["Phone"],
-        gender=Gender(fields["Gender"]),
-        school=fields["School"],
-        city=fields["City"],
-        ethnicity=strToEnumList(fields["Ethnicity"], Ethnicity),
-        date_of_birth= datetime.strptime(fields["Date of Birth"], '%Y-%m-%d'),
-        dietary=strToEnumList(fields["Dietary Restrictions"], DietaryRestriction),
-        t_shirt_size=ShirtSize(fields["T-Shirt Size"]),
+        age=int(fields("Age")),
         contact=strToEnumList(fields["How did you hear about us?"], Contact),
-        parent_first_name=fields["Parent/Guardian First Name"],
-        parent_last_name=fields["Parent/Guardian Last Name"],
-        parent_email=fields["Parent/Guardian Email Address"],
-        parent_phone=fields["Parent/Guardian Phone Number"],
-        previous_hackathons=int(fields["Number of Previous Hackathons Attended"]),
-        experience=Experience(fields["Programming Experience"]),
-        device="Access to Device" in fields.keys(),
-        communications="Share info with MLH?" in fields.keys(),
-        github=(fields["GitHub"] if "GitHub" in fields.keys() else None),
-        linkedin=(fields["LinkedIn"] if "LinkedIn" in fields.keys() else None),
+        contact_other=(fields["Other Contact"] if "Other Contact" in fields.keys() else None),
+        dietary_restrictions=strToEnumList(fields["Dietary Restrictions"], DietaryRestriction),
+        dietary_restrictions_other=(fields["Other Dietary"] if "Other Dietary" in fields.keys() else None),
+        email=fields["Email"],
+        ethnicity=strToEnumList(fields["Ethnicity"], Ethnicity),
         ethnicity_other=(fields["Other Ethnicity"] if "Other Ethnicity" in fields.keys() else None),
-        dietary_other=(fields["Other Dietary"] if "Other Dietary" in fields.keys() else None),
-        contact_other=(fields["Other Contact"] if "Other Contact" in fields.keys() else None)
+        experience=Experience(fields["Programming Experience"]),
+        first_name=fields["First Name"],
+        gender=Gender(fields["Gender"]),
+        github=(fields["GitHub"] if "GitHub" in fields.keys() else None),
+        grade=Grade(fields["Grade"]),
+        hackathons=int(fields["Number of Previous Hackathons Attended"]),
+        last_name=fields["Last Name"],
+        linkedin=(fields["LinkedIn"] if "LinkedIn" in fields.keys() else None),
+        parent_email=fields["Parent/Guardian Email Address"],
+        parent_name=fields["Parent/Guardian First Name"],
+        parent_tel=fields["Parent/Guardian Phone Number"],
+        school_name=fields["School"],
+        school_place_id=fields["School Place ID"],
+        shirt_size=ShirtSize(fields["T-Shirt Size"]),
+        tel=fields["Phone"]
     )
 
