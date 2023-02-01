@@ -6,8 +6,6 @@ async def get_table():
     BASE = os.getenv('BASE', default="")
     TABLE = os.getenv('TABLE', default="")
 
-    print(BASE)
-
     table = Table(AIRTABLE_KEY, BASE, TABLE)
 
     return table

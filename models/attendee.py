@@ -116,7 +116,7 @@ class Attendee(BaseModel):
             if field_name in fields_dict.keys() and fields_dict[field_name] != None:
                 fields_dict[field_name] = enumListToStringVals(fields_dict[field_name])
 
-        enum_fields = ["Gender", "Gender", "T-Shirt Size"]
+        enum_fields = ["Gender", "Grade", "T-Shirt Size"]
         for field_name in enum_fields:
             if field_name in fields_dict.keys() and fields_dict[field_name] != None:
                 fields_dict[field_name] = fields_dict[field_name].value

@@ -30,7 +30,7 @@ def get_password_hash(password):
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
-def create_access_token(data: dict, expires_delta: timedelta | None = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)):
+def create_jwt(data: dict, expires_delta: timedelta | None = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)):
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
@@ -41,7 +41,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = timedelta(
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-def decode_access_token(token: str):
+def decode_jwt(token: str):
     try:
         decoded_token = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         if datetime.utcfromtimestamp(decoded_token["exp"]) >= datetime.utcnow():
@@ -50,6 +50,17 @@ def decode_access_token(token: str):
             return None
     except JWTError:
         return None
+
+def verify_jwt(jwtoken: str) -> bool:
+    isTokenValid: bool = False
+
+    try:
+        payload = decode_jwt(jwtoken)
+    except:
+        payload = None
+    if payload:
+        isTokenValid = True
+    return isTokenValid
 
 @router.post("/token", response_model=Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
@@ -60,5 +71,5 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
             headers={"WWW-Authenticate": "Bearer"},
         )
     
-    access_token = create_access_token(data={"sub": form_data.username}, expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
+    access_token = create_jwt(data={"sub": form_data.username}, expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
     return {"access_token": access_token, "token_type": "bearer"}

@@ -4,7 +4,7 @@ from routers import register, school_search, verify, attendees
 from auth import auth_handler
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(override=True)
 
 app = FastAPI()
 
@@ -12,6 +12,7 @@ app.include_router(register.router)
 app.include_router(auth_handler.router)
 app.include_router(school_search.router)
 app.include_router(attendees.router)
+app.include_router(verify.router)
 
 # TODO:
 # Endpoint for a registration form submission (with spam prevention with Cloudflare Turnstile)
