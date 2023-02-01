@@ -3,10 +3,12 @@ from pyairtable.api.table import Table
 from models.attendee import Attendee, UpdatedAttendee
 from models.attendee import recordToAttendee
 from dependencies import get_table
+from auth.auth_bearer import JWTBearer
 
 router = APIRouter(
     prefix="/attendees",
-    tags=["attendees"]
+    tags=["attendees"],
+    dependencies=[Depends(JWTBearer())]
 )
 
 # get list of all attendees

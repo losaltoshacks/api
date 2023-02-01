@@ -1,14 +1,15 @@
 import imp
-from typing import Union
 from fastapi import FastAPI
 from routers import register, school_search, verify, attendees
+from auth import auth_handler
 from dotenv import load_dotenv
 
 load_dotenv()
 
 app = FastAPI()
 
-# app.include_router(register.router)
+app.include_router(register.router)
+app.include_router(auth_handler.router)
 app.include_router(school_search.router)
 app.include_router(attendees.router)
 

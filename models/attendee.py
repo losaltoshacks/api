@@ -3,7 +3,6 @@ from pydantic.main import ModelMetaclass
 from enum import Enum
 from datetime import datetime
 from fastapi import Query
-from typing import Optional
 
 # Helper Functions ===========
 # listOfNames is an array containing the string values of an enum class, type is an Enum class
@@ -94,7 +93,7 @@ class Attendee(BaseModel):
     dietary_other: str | None = Field(default=None, alias="Other Dietary") 
     t_shirt_size: ShirtSize = Field(alias="T-Shirt Size")
     contact: list[Contact] = Field(alias="How did you hear about us?")
-    contact_other: str | None = Field(default=None alias="Other Contact")
+    contact_other: str | None = Field(default=None, alias="Other Contact")
     parent_first_name: str = Field(alias="Parent/Guardian First Name")
     parent_last_name: str = Field(alias="Parent/Guardian Last Name")
     parent_email: str = Field(alias="Parent/Guardian Email Address")
