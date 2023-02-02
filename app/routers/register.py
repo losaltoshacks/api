@@ -48,8 +48,6 @@ domain_validator = EmailDomainValidator()
 async def add_attendee(
     attendee: Attendee, request: Request, table: Table = Depends(get_table)
 ):
-    print(os.environ)
-
     # Check if the Cloudflare Turnstile token is valid
     turnstile = requests.post(
         "https://challenges.cloudflare.com/turnstile/v0/siteverify",
@@ -58,8 +56,6 @@ async def add_attendee(
             "response": attendee.cf_turnstile_response,
         },
     )
-
-    print(turnstile.json())
 
     if not turnstile.json()["success"]:
         raise HTTPException(
