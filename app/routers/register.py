@@ -17,6 +17,8 @@ POSTMARK_SERVER_TOKEN = os.getenv("POSTMARK_SERVER_TOKEN")
 BLACKLIST_PATH = os.getenv("BLACKLIST_PATH")
 CLOUDFLARE_SECRET_KEY = os.getenv("CLOUDFLARE_SECRET_KEY")
 
+VERIFY_PATH = "https://registration.losaltoshacks.com/verify"
+
 router = APIRouter(
     prefix="/register",
     tags=["register"],
@@ -104,13 +106,11 @@ async def add_attendee(
         {"id": attendee_id, "type": "parent"}, expires_delta=expire_delta
     )
 
-    domain = request.url._url.removesuffix(request.url.path)
-
     postmark.emails.send_with_template(
         TemplateAlias="email-verification",
         TemplateModel={
             "name": attendee.first_name,
-            "action_url": f"{domain}/verify/{student_token}",
+            "action_url": f"{VERIFY_PATH}?token={student_token}",
         },
         From="hello@losaltoshacks.com",
         To=attendee.email,
@@ -120,7 +120,7 @@ async def add_attendee(
         TemplateAlias="email-verification",
         TemplateModel={
             "name": attendee.first_name + "'s parent/guardian",
-            "action_url": f"{domain}/verify/{parent_token}",
+            "action_url": f"{VERIFY_PATH}?token={parent_token}",
         },
         From="hello@losaltoshacks.com",
         To=attendee.parent_email,
