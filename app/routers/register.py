@@ -57,11 +57,11 @@ async def add_attendee(
             "secret": CLOUDFLARE_SECRET_KEY,
             "response": attendee.cf_turnstile_response,
         },
-    )
+    ).json()
 
-    if not turnstile.json()["success"]:
+    if not turnstile["success"]:
         raise HTTPException(
-            status_code=400, detail="Invalid Cloudflare Turnstile token."
+            status_code=400, detail="Turnstile Error: " + str(turnstile["error-codes"])
         )
 
     # Check emails are valid
@@ -90,8 +90,6 @@ async def add_attendee(
             status_code=400,
             detail="Do not use temporary email addresses.",
         )
-
-    # TODO: Cloudflare Turnstile
 
     # Verify both attendee and parent emails
     res = table.create(attendee.getAirtableFields())
@@ -126,5 +124,4 @@ async def add_attendee(
         To=attendee.parent_email,
     )
 
-    # TODO: Change this to a 200 response code when debugging is finished.
     return res
