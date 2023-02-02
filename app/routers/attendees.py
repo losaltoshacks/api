@@ -4,9 +4,6 @@ from ..models.attendee import UpdatedAttendee
 from ..models.attendee import recordToAttendee
 from ..dependencies import get_table
 from ..auth.auth_bearer import JWTBearer
-from dotenv import load_dotenv
-
-load_dotenv(override=True)
 
 router = APIRouter(
     prefix="/attendees", tags=["attendees"], dependencies=[Depends(JWTBearer())]
