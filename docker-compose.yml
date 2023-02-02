@@ -2,7 +2,7 @@ version: '3'
 
 services:
   api:
-    build: https://github.com/LosAltosHacks/api.git
+    build: https://github.com/LosAltosHacks/api.git#production
     env_file:
       - .env
     restart: always
