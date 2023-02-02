@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from pyairtable.api.table import Table
 from ..dependencies import get_table
-from ..models.attendee import recordToAttendee
 from ..auth.auth_handler import verify_jwt, decode_jwt
 
 router = APIRouter(prefix="/verify", tags=["verify"])
@@ -28,9 +27,20 @@ async def verify_email(token: str, table: Table = Depends(get_table)):
     try:
         attendee = table.update(attendee_id, {field_name: True})
 
+        parent_email_verified = (
+            attendee["fields"]["Parent Email Verified"]
+            if "Parent Email Verified" in attendee["fields"]
+            else False
+        )
+        email_verified = (
+            attendee["fields"]["Email Verified"]
+            if "Email Verified" in attendee["fields"]
+            else False
+        )
+
         return {
-            "parent_email_verified": attendee["fields"]["Parent Email Verified"],
-            "email_verified": attendee["fields"]["Email Verified"],
+            "parent_email_verified": parent_email_verified,
+            "email_verified": email_verified,
         }
     except:
         # attendee does not exist
