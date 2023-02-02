@@ -9,11 +9,12 @@ uvicorn = {extras = ["standard"], version = "*"}
 postmarker = "*"
 requests = "*"
 pyairtable = "*"
-py3-validate-email = {git = "https://gitea.ksol.io/karolyi/py3-validate-email"}
-passlib = {extras = ["bcrypt"], version = "*"}
 python-dotenv = "*"
 python-jose = {extras = ["cryptography"], version = "*"}
 python-multipart = "*"
+passlib = {extras = ["bcrypt"], version = "*"}
+black = "*"
+email-validator = "*"
 
 [dev-packages]
 
