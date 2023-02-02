@@ -78,7 +78,7 @@ class DietaryRestriction(str, Enum):
     nut_allergy = "Nut Allergy"
 
 
-class Contact(str, Enum):
+class Outreach(str, Enum):
     instagram = "Instagram"
     linkedin = "LinkedIn"
     twitter = "Twitter"
@@ -91,18 +91,16 @@ class Contact(str, Enum):
 
 # Classes ====================
 class Attendee(BaseModel):
-    airtable_id: str | None = Field(default=None, alias="id")
     age: int = Field(alias="Age")
+    airtable_id: str | None = Field(default=None, alias="id")
     cf_turnstile_response: str = Field(alias="cf_turnstile_response")
-    contact: list[Contact] = Field(alias="Outreach Methods")
-    contact_other: str | None = Field(default=None, alias="Other Contact")
+    dietary_restrictions_other: str | None = Field(default=None, alias="Other Dietary")
     dietary_restrictions: list[DietaryRestriction] | None = Field(
         default=None, alias="Dietary Restrictions"
     )
-    dietary_restrictions_other: str | None = Field(default=None, alias="Other Dietary")
     email: str = Field(alias="Email")
-    ethnicity: list[Ethnicity] = Field(alias="Ethnicity")
     ethnicity_other: str | None = Field(default=None, alias="Other Ethnicity")
+    ethnicity: list[Ethnicity] = Field(alias="Ethnicity")
     experience: Experience = Field(alias="Programming Experience")
     first_name: str = Field(alias="First Name")
     gender: Gender = Field(alias="Gender")
@@ -115,6 +113,8 @@ class Attendee(BaseModel):
         default=None,
         alias="LinkedIn",
     )
+    outreach_other: str | None = Field(default=None, alias="Other Outreach")
+    outreach: list[Outreach] = Field(alias="Outreach Methods")
     parent_email: str = Field(alias="Parent/Guardian Email Address")
     parent_name: str = Field(alias="Parent/Guardian Name")
     parent_tel: str = Field(alias="Parent/Guardian Phone Number")
@@ -175,9 +175,9 @@ def recordToAttendee(airtableRecord):
     return Attendee(
         airtable_id=airtableRecord["id"],
         age=int(fields("Age")),
-        contact=strToEnumList(fields["How did you hear about us?"], Contact),
-        contact_other=(
-            fields["Other Contact"] if "Other Contact" in fields.keys() else None
+        outreach=strToEnumList(fields["Outreach Methods"], Outreach),
+        outreach_other=(
+            fields["Other Outreach"] if "Other Outreach" in fields.keys() else None
         ),
         dietary_restrictions=strToEnumList(
             fields["Dietary Restrictions"], DietaryRestriction
