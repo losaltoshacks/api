@@ -54,6 +54,8 @@ async def add_attendee(
         },
     )
 
+    print(turnstile.json())
+
     if not turnstile.json()["success"]:
         raise HTTPException(
             status_code=400, detail="Invalid Cloudflare Turnstile token."
