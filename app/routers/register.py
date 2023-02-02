@@ -103,21 +103,25 @@ async def add_attendee(
 
     domain = request.url._url.removesuffix(request.url.path)
 
-    # postmark.emails.send_with_template(
-    #     TemplateAlias="email-verification",
-    #     TemplateModel={
-    #         "name": attendee.first_name,
-    #         "action_url": f"{domain}/verify/{student_token}",
-    #     },
-    #     From="hello@losaltoshacks.com",
-    #     To=attendee.email,
-    # )
+    postmark.emails.send_with_template(
+        TemplateAlias="email-verification",
+        TemplateModel={
+            "name": attendee.first_name,
+            "action_url": f"{domain}/verify/{student_token}",
+        },
+        From="hello@losaltoshacks.com",
+        To=attendee.email,
+    )
 
-    # TODO: uncomment once testing is over
-    # postmark.emails.send(
-    #     From='hello@losaltoshacks.com',
-    #     To=attendee.parent_email,
-    #     Subject='Verify Los Altos Hacks Email',
-    #     HtmlBody=f'Verify email: {domain}/verify/{student_token}' # TODO: make this an actual body
-    #
+    postmark.emails.send_with_template(
+        TemplateAlias="email-verification",
+        TemplateModel={
+            "name": attendee.first_name + "'s parent/guardian",
+            "action_url": f"{domain}/verify/{parent_token}",
+        },
+        From="hello@losaltoshacks.com",
+        To=attendee.parent_email,
+    )
+
+    # TODO: Change this to a 200 response code when debugging is finished.
     return res
