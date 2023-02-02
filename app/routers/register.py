@@ -9,6 +9,9 @@ from email_validator import validate_email, EmailNotValidError
 from datetime import timedelta
 import requests
 import bisect
+from dotenv import load_dotenv
+
+load_dotenv()
 
 POSTMARK_SERVER_TOKEN = os.getenv("POSTMARK_SERVER_TOKEN")
 BLACKLIST_PATH = os.getenv("BLACKLIST_PATH")
@@ -45,6 +48,8 @@ domain_validator = EmailDomainValidator()
 async def add_attendee(
     attendee: Attendee, request: Request, table: Table = Depends(get_table)
 ):
+    print(os.environ)
+
     # Check if the Cloudflare Turnstile token is valid
     turnstile = requests.post(
         "https://challenges.cloudflare.com/turnstile/v0/siteverify",
