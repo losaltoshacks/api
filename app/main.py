@@ -12,7 +12,7 @@ origins = [
     "http://registration.losaltoshacks.com",
     "https://registration.losaltoshacks.com",
     "http://localhost",
-    "http://localhost:8000",
+    "http://localhost:5173",
 ]
 
 app.add_middleware(
