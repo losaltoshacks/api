@@ -36,7 +36,6 @@ def create_jwt(data: dict, expires_delta: timedelta | None = timedelta(minutes=A
         expire = datetime.utcnow() + expires_delta
     else:
         expire = datetime.utcnow() + timedelta(minutes=30)
-    print(expire)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
