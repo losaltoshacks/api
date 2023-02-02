@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from pyairtable.api.table import Table
-from dependencies import get_table
-from auth.auth_handler import verify_jwt, decode_jwt
+from ..dependencies import get_table
+from ..auth.auth_handler import verify_jwt, decode_jwt
 
 router = APIRouter(prefix="/verify", tags=["verify"])
 

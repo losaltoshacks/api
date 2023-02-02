@@ -1,9 +1,9 @@
 from fastapi import APIRouter, HTTPException, Depends, Request
 from pyairtable.api.table import Table
-from models.attendee import UpdatedAttendee
-from models.attendee import recordToAttendee
-from dependencies import get_table
-from auth.auth_bearer import JWTBearer
+from ..models.attendee import UpdatedAttendee
+from ..models.attendee import recordToAttendee
+from ..dependencies import get_table
+from ..auth.auth_bearer import JWTBearer
 from dotenv import load_dotenv
 
 load_dotenv(override=True)

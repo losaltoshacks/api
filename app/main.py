@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from routers import register, verify, attendees
-from auth import auth_handler
+from .routers import register, verify, attendees
+from .auth import auth_handler
 from dotenv import load_dotenv
 
 load_dotenv(override=True)

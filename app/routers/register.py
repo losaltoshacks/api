@@ -1,10 +1,10 @@
 import os
-from auth.auth_handler import create_jwt
+from ..auth.auth_handler import create_jwt
 from postmarker.core import PostmarkClient
-from models.attendee import Attendee
+from ..models.attendee import Attendee
 from fastapi import APIRouter, HTTPException, Depends, Request
 from pyairtable.api.table import Table
-from dependencies import get_table
+from ..dependencies import get_table
 from email_validator import validate_email, EmailNotValidError
 from datetime import timedelta
 import requests
