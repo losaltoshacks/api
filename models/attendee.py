@@ -1,8 +1,8 @@
 from pydantic import BaseModel, Field
 from pydantic.main import ModelMetaclass
 from enum import Enum
-from datetime import datetime
 from fastapi import Query
+
 
 # Helper Functions ===========
 # listOfNames is an array containing the string values of an enum class, type is an Enum class
@@ -10,21 +10,23 @@ def strToEnumList(listOfNames, type):
     res = []
 
     for val in listOfNames:
-        try: 
+        try:
             res.append(type(val))
         except:
-            continue # TODO: see if this ever gets called?   
+            continue  # TODO: see if this ever gets called?
     return res
+
 
 def enumListToStringVals(listOfEnums):
     res = []
 
     for val in listOfEnums:
-        try: 
+        try:
             res.append(val.value)
         except:
-            continue # TODO: see if this ever gets called?   
+            continue  # TODO: see if this ever gets called?
     return res
+
 
 # Enums ======================
 class Grade(str, Enum):
@@ -34,6 +36,7 @@ class Grade(str, Enum):
     eleventh = "11th Grade"
     twelveth = "12th Grade"
 
+
 class Gender(str, Enum):
     male = "Male"
     female = "Female"
@@ -41,17 +44,21 @@ class Gender(str, Enum):
     other = "Not listed above"
     na = "Prefer not to answer"
 
+
 class ShirtSize(str, Enum):
     small = "Small (S)"
     medium = "Medium (M)"
     large = "Large (L)"
     extra_large = "Extra Large (XL)"
 
+
 class Experience(str, Enum):
     none = "None"
-    beginner = "Beginner (< 1 year)"
-    intermediate = "Intermediate (1 to 2 years)"
-    advanced = "Advanced (3+ years)"
+    beginner = "Beginner (< 6 months)"
+    intermediate = "Intermediate (< 2 years)"
+    advanced = "Advanced (< 5 years)"
+    expert = "Expert (> 5 years)"
+
 
 class Ethnicity(str, Enum):
     aian = "American Indian or Alaska Native"
@@ -62,12 +69,14 @@ class Ethnicity(str, Enum):
     white = "White"
     na = "Prefer not to answer"
 
+
 class DietaryRestriction(str, Enum):
     vegetarian = "Vegetarian"
     vegan = "Vegan"
     lactose_intolerant = "Lactose Intolerant"
     gluten_intolerant = "Gluten Intolerant"
     nut_allergy = "Nut Allergy"
+
 
 class Contact(str, Enum):
     instagram = "Instagram"
@@ -79,14 +88,18 @@ class Contact(str, Enum):
     teacher = "Teachers"
     counselor = "School Counselor"
 
+
 # Classes ====================
 class Attendee(BaseModel):
     airtable_id: str | None = Field(default=None, alias="id")
     age: int = Field(alias="Age")
-    contact: list[Contact] = Field(alias="How did you hear about us?")
+    cf_turnstile_response: str = Field(alias="cf_turnstile_response")
+    contact: list[Contact] = Field(alias="Outreach Methods")
     contact_other: str | None = Field(default=None, alias="Other Contact")
-    dietary_restrictions: list[DietaryRestriction] | None = Field(default=None, alias="Dietary Restrictions")
-    dietary_restrictions_other: str | None = Field(default=None, alias="Other Dietary") 
+    dietary_restrictions: list[DietaryRestriction] | None = Field(
+        default=None, alias="Dietary Restrictions"
+    )
+    dietary_restrictions_other: str | None = Field(default=None, alias="Other Dietary")
     email: str = Field(alias="Email")
     ethnicity: list[Ethnicity] = Field(alias="Ethnicity")
     ethnicity_other: str | None = Field(default=None, alias="Other Ethnicity")
@@ -97,9 +110,13 @@ class Attendee(BaseModel):
     grade: Grade = Field(alias="Grade")
     hackathons: int = Field(alias="Number of Previous Hackathons Attended")
     last_name: str = Field(alias="Last Name")
-    linkedin: str | None = Query(regex="^(http(s)?:\/\/)?([\w]+\.)?linkedin\.com\/(pub|in|profile)\/(.*)$", default = None, alias="LinkedIn")
+    linkedin: str | None = Query(
+        regex="^(http(s)?:\/\/)?([\w]+\.)?linkedin\.com\/(pub|in|profile)\/(.*)$",
+        default=None,
+        alias="LinkedIn",
+    )
     parent_email: str = Field(alias="Parent/Guardian Email Address")
-    parent_name: str = Field(alias="Parent/Guardian First Name")
+    parent_name: str = Field(alias="Parent/Guardian Name")
     parent_tel: str = Field(alias="Parent/Guardian Phone Number")
     school_name: str = Field(alias="School")
     school_place_id: str = Field(alias="School Place ID")
@@ -110,26 +127,35 @@ class Attendee(BaseModel):
         allow_population_by_field_name = True
 
     def getAirtableFields(self):
-        fields_dict = self.dict(exclude={"airtable_id", "ethnicity_other","dietary_other","contact_other"}, by_alias=True)
-        enum_list_fields = ["Ethnicity", "Dietary Restrictions", "How did you hear about us?"]
+        fields_dict = self.dict(
+            exclude={"airtable_id", "cf_turnstile_response"},
+            by_alias=True,
+        )
+        enum_list_fields = [
+            "Ethnicity",
+            "Dietary Restrictions",
+            "Outreach Methods",
+        ]
         for field_name in enum_list_fields:
-            if field_name in fields_dict.keys() and fields_dict[field_name] != None:
+            if field_name in fields_dict.keys() and fields_dict[field_name] is not None:
                 fields_dict[field_name] = enumListToStringVals(fields_dict[field_name])
 
         enum_fields = ["Gender", "Grade", "T-Shirt Size"]
         for field_name in enum_fields:
-            if field_name in fields_dict.keys() and fields_dict[field_name] != None:
+            if field_name in fields_dict.keys() and fields_dict[field_name] is not None:
                 fields_dict[field_name] = fields_dict[field_name].value
-        
+
         return fields_dict
-    
+
+
 # metaclass for converting all parameters into optional ones
 class AllOptional(ModelMetaclass):
     def __new__(mcls, name, bases, namespaces, **kwargs):
         cls = super().__new__(mcls, name, bases, namespaces, **kwargs)
         for field in cls.__fields__.values():
-            field.required=False
+            field.required = False
         return cls
+
 
 # same as Attendee, but all parameters are optional
 class UpdatedAttendee(Attendee, metaclass=AllOptional):
@@ -138,10 +164,11 @@ class UpdatedAttendee(Attendee, metaclass=AllOptional):
         fields_dict = self.getAirtableFields()
         stripped_fields_dict = {}
         for key, val in fields_dict.items():
-            if val != None:
+            if val is not None:
                 stripped_fields_dict[key] = val
-        
+
         return stripped_fields_dict
+
 
 def recordToAttendee(airtableRecord):
     fields = airtableRecord["fields"]
@@ -149,12 +176,20 @@ def recordToAttendee(airtableRecord):
         airtable_id=airtableRecord["id"],
         age=int(fields("Age")),
         contact=strToEnumList(fields["How did you hear about us?"], Contact),
-        contact_other=(fields["Other Contact"] if "Other Contact" in fields.keys() else None),
-        dietary_restrictions=strToEnumList(fields["Dietary Restrictions"], DietaryRestriction),
-        dietary_restrictions_other=(fields["Other Dietary"] if "Other Dietary" in fields.keys() else None),
+        contact_other=(
+            fields["Other Contact"] if "Other Contact" in fields.keys() else None
+        ),
+        dietary_restrictions=strToEnumList(
+            fields["Dietary Restrictions"], DietaryRestriction
+        ),
+        dietary_restrictions_other=(
+            fields["Other Dietary"] if "Other Dietary" in fields.keys() else None
+        ),
         email=fields["Email"],
         ethnicity=strToEnumList(fields["Ethnicity"], Ethnicity),
-        ethnicity_other=(fields["Other Ethnicity"] if "Other Ethnicity" in fields.keys() else None),
+        ethnicity_other=(
+            fields["Other Ethnicity"] if "Other Ethnicity" in fields.keys() else None
+        ),
         experience=Experience(fields["Programming Experience"]),
         first_name=fields["First Name"],
         gender=Gender(fields["Gender"]),
@@ -169,6 +204,5 @@ def recordToAttendee(airtableRecord):
         school_name=fields["School"],
         school_place_id=fields["School Place ID"],
         shirt_size=ShirtSize(fields["T-Shirt Size"]),
-        tel=fields["Phone"]
+        tel=fields["Phone"],
     )
-
