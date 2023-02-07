@@ -86,6 +86,12 @@ async def add_attendee(
             detail=f"Your parent/legal guardian's email address is not valid. {e}",
         )
 
+    if attendee.email == attendee.parent_email:
+        raise HTTPException(
+            status_code=400,
+            detail="Attendee email and parent email cannot be the same.",
+        )
+
     if not domain_validator.validate(
         email.ascii_domain
     ) or not domain_validator.validate(parent_email.ascii_domain):
