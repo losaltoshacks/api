@@ -18,7 +18,7 @@ POSTMARK_SERVER_TOKEN = os.getenv("POSTMARK_SERVER_TOKEN")
 BLACKLIST_PATH = os.getenv("BLACKLIST_PATH")
 CLOUDFLARE_SECRET_KEY = os.getenv("CLOUDFLARE_SECRET_KEY")
 
-VERIFY_PATH = "https://registration.losaltoshacks.com/verify"
+VERIFY_PATH = "https://register.losaltoshacks.com/verify"
 
 router = APIRouter(
     prefix="/register",
