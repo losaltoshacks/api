@@ -119,7 +119,7 @@ class Attendee(BaseModel):
     parent_name: str = Field(alias="Parent/Guardian Name")
     parent_tel: str = Field(alias="Parent/Guardian Phone Number")
     school_name: str = Field(alias="School")
-    school_place_id: str = Field(alias="School Place ID")
+    school_address: str = Field(alias="School Address")
     shirt_size: ShirtSize = Field(alias="T-Shirt Size")
     tel: str = Field(alias="Phone")
 
@@ -202,7 +202,7 @@ def recordToAttendee(airtableRecord):
         parent_name=fields["Parent/Guardian First Name"],
         parent_tel=fields["Parent/Guardian Phone Number"],
         school_name=fields["School"],
-        school_place_id=fields["School Place ID"],
+        school_address=fields["School Address"],
         shirt_size=ShirtSize(fields["T-Shirt Size"]),
         tel=fields["Phone"],
     )
