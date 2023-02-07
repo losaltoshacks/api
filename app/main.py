@@ -9,8 +9,8 @@ load_dotenv(override=True)
 app = FastAPI()
 
 origins = [
-    "http://registration.losaltoshacks.com",
-    "https://registration.losaltoshacks.com",
+    "http://register.losaltoshacks.com",
+    "https://register.losaltoshacks.com",
     "http://localhost",
     "http://localhost:5173",
 ]
