@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from pyairtable.api.table import Table
+from sentry_sdk import capture_message
 from ..dependencies import get_table
 from ..auth.auth_handler import verify_jwt, decode_jwt
 
@@ -10,9 +11,11 @@ router = APIRouter(prefix="/verify", tags=["verify"])
 async def verify_email(token: str, table: Table = Depends(get_table)):
     # token is invalid or expired
     if not verify_jwt(token):
-        raise HTTPException(
+        e = HTTPException(
             status_code=403, detail="Invalid or expired verification link."
         )
+        capture_message("Invalid or expired verification link.")
+        raise e
 
     payload = decode_jwt(token)
     attendee_id = payload["id"]
@@ -20,7 +23,9 @@ async def verify_email(token: str, table: Table = Depends(get_table)):
 
     if not attendee_id or not email_type:
         # token does not contain payload id
-        raise HTTPException(status_code=403, detail="Invalid verification link.")
+        e = HTTPException(status_code=403, detail="Invalid verification link.")
+        capture_message(detail="Invalid verification link.")
+        raise e
 
     field_name = "Parent Email Verified" if email_type == "parent" else "Email Verified"
 
@@ -44,4 +49,6 @@ async def verify_email(token: str, table: Table = Depends(get_table)):
         }
     except:
         # attendee does not exist
-        raise HTTPException(status_code=403, detail="Invalid attendee ID.")
+        e = HTTPException(status_code=403, detail="Invalid attendee ID.")
+        capture_message(detail="Invalid attendee ID.")
+        raise e

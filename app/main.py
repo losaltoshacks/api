@@ -3,8 +3,20 @@ from fastapi.middleware.cors import CORSMiddleware
 from .routers import register, verify, attendees
 from .auth import auth_handler
 from dotenv import load_dotenv
+import sentry_sdk
+import os
 
 load_dotenv(override=True)
+
+SENTRY_DSN = os.getenv("SENTRY_DSN")
+
+sentry_sdk.init(
+    dsn=SENTRY_DSN,
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    # We recommend adjusting this value in production,
+    traces_sample_rate=0.25,
+)
 
 app = FastAPI()
 

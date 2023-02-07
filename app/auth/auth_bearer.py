@@ -1,5 +1,6 @@
 from fastapi import HTTPException, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from sentry_sdk import capture_message
 from ..auth.auth_handler import verify_jwt
 
 
@@ -14,13 +15,19 @@ class JWTBearer(HTTPBearer):
         ).__call__(request)
         if credentials:
             if not credentials.scheme == "Bearer":
-                raise HTTPException(
+                e = HTTPException(
                     status_code=403, detail="Invalid authentication scheme."
                 )
+                capture_message("Invalid authentication scheme.")
+                raise e
             if not verify_jwt(credentials.credentials):
-                raise HTTPException(
+                e = HTTPException(
                     status_code=403, detail="Invalid token or expired token."
                 )
+                capture_message("Invalid token or expired token.")
+                raise e
             return credentials.credentials
         else:
-            raise HTTPException(status_code=403, detail="Invalid authorization code.")
+            e = HTTPException(status_code=403, detail="Invalid authorization code.")
+            capture_message("Invalid authorization code.")
+            raise e

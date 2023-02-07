@@ -9,6 +9,7 @@ from email_validator import validate_email, EmailNotValidError
 from datetime import timedelta
 import requests
 import bisect
+from sentry_sdk import capture_message
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -60,9 +61,11 @@ async def add_attendee(
     ).json()
 
     if not turnstile["success"]:
-        raise HTTPException(
+        e = HTTPException(
             status_code=400, detail="Turnstile Error: " + str(turnstile["error-codes"])
         )
+        capture_message("Turnstile Error: " + str(turnstile["error-codes"]))
+        raise e
 
     # Check emails are valid
     try:
@@ -86,10 +89,11 @@ async def add_attendee(
     if not domain_validator.validate(
         email.ascii_domain
     ) or not domain_validator.validate(parent_email.ascii_domain):
-        raise HTTPException(
+        e = HTTPException(
             status_code=400,
             detail="Do not use temporary email addresses.",
         )
+        raise e
 
     # Verify both attendee and parent emails
     res = table.create(attendee.getAirtableFields())
