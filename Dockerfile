@@ -7,6 +7,9 @@ ENV LC_ALL C.UTF-8
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONFAULTHANDLER 1
 
+# Allow statements and log messages to immediately appear in the Knative logs
+ENV PYTHONUNBUFFERED 1
+
 # Set the current working directory to /code.
 WORKDIR /code
 
@@ -22,5 +25,5 @@ RUN pip install pipenv && pipenv install --dev --system --deploy
 # 
 COPY ./app /code/app
 
-# 
-CMD ["uvicorn", "app.main:app", "--proxy-headers", "--host", "0.0.0.0", "--port", "80"]
+# Timeout is set to 0 to disable the timeouts of the workers to allow Cloud Run to handle instance scaling.
+CMD ["uvicorn", "app.main:app", "--proxy-headers", "--port", $PORT, "--timeout", "0", "--workers", "1", "--threads", "8"]
