@@ -15,6 +15,7 @@ passlib = {extras = ["bcrypt"], version = "*"}
 black = "*"
 email-validator = "*"
 sentry-sdk = {extras = ["fastapi"], version = "*"}
+gunicorn = "*"
 
 [dev-packages]
 python-dotenv = "*"

@@ -1,5 +1,5 @@
 # Start from the official Python base image.
-FROM python:3.11
+FROM python:3.11-slim
 
 # Setup env
 ENV LANG C.UTF-8
@@ -20,10 +20,11 @@ RUN pip install pipenv
 COPY ./Pipfile /code/Pipfile
 COPY ./Pipfile.lock /code/Pipfile.lock
 RUN python -m pip install --upgrade pip
-RUN pip install pipenv && pipenv install --dev --system --deploy
+RUN pip install pipenv && pipenv install --system --deploy
 
-# 
+# Copy the app directory to the /code directory.
 COPY ./app /code/app
 
+# Run the uvicorn command, telling it to use the app object imported from app.main.
 # Timeout is set to 0 to disable the timeouts of the workers to allow Cloud Run to handle instance scaling.
-CMD ["uvicorn", "app.main:app", "--proxy-headers", "--port", $PORT, "--timeout", "0", "--workers", "1", "--threads", "8"]
+CMD gunicorn app.main:app --bind :$PORT --worker-class uvicorn.workers.UvicornWorker --timeout 0 --workers 1 --threads 8
