@@ -16,7 +16,7 @@ load_dotenv()
 
 POSTMARK_SERVER_TOKEN = os.getenv("POSTMARK_SERVER_TOKEN")
 BLACKLIST_PATH = os.getenv("BLACKLIST_PATH")
-CLOUDFLARE_SECRET_KEY = os.getenv("CLOUDFLARE_SECRET_KEY")
+RECAPTCHA_SECRET_KEY = os.getenv("RECAPTCHA_SECRET_KEY")
 
 VERIFY_PATH = "https://register.losaltoshacks.com/verify"
 
@@ -51,21 +51,39 @@ domain_validator = EmailDomainValidator()
 async def add_attendee(
     attendee: Attendee, request: Request, table: Table = Depends(get_table)
 ):
-    # Check if the Cloudflare Turnstile token is valid
-    turnstile = requests.post(
-        "https://challenges.cloudflare.com/turnstile/v0/siteverify",
-        data={
-            "secret": CLOUDFLARE_SECRET_KEY,
-            "response": attendee.cf_turnstile_response,
-        },
-    ).json()
+    # Check if the reCAPTCHA token is valid
+    # recaptcha = requests.post(
+    #     "https://www.google.com/recaptcha/api/siteverify",
+    #     data={
+    #         "secret": RECAPTCHA_SECRET_KEY,
+    #         "response": attendee.token,
+    #     },
+    # ).json()
 
-    if not turnstile["success"]:
-        e = HTTPException(
-            status_code=400, detail="Turnstile Error: " + str(turnstile["error-codes"])
-        )
-        capture_message("Turnstile Error: " + str(turnstile["error-codes"]))
-        raise e
+    # if not recaptcha["success"]:
+    #     e = HTTPException(
+    #         status_code=400, detail="reCAPTCHA Error: " + str(recaptcha["error-codes"])
+    #     )
+    #     capture_message("reCAPTCHA Error: " + str(recaptcha["error-codes"]))
+    #     raise e
+
+    # if recaptcha["action"] != "submit":
+    #     e = HTTPException(
+    #         status_code=400,
+    #         detail="Invalid reCAPTCHA action for this route.",
+    #     )
+    #     capture_message(
+    #         f'Invalid reCAPTCHA action for this route. Action was {recaptcha["action"]}'
+    #     )
+    #     raise e
+
+    # if recaptcha["score"] < 0.5:
+    #     e = HTTPException(
+    #         status_code=400,
+    #         detail=f'Failed reCAPTCHA (score was {recaptcha["score"]}). Are you a bot?',
+    #     )
+    #     capture_message(f'Failed reCAPTCHA (score was {recaptcha["score"]}).')
+    #     raise e
 
     # Check emails are valid
     try:

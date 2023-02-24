@@ -93,7 +93,7 @@ class Outreach(str, Enum):
 class Attendee(BaseModel):
     age: int = Field(alias="Age")
     airtable_id: str | None = Field(default=None, alias="id")
-    cf_turnstile_response: str = Field(alias="cf_turnstile_response")
+    # token: str = Field(alias="reCAPTCHA Token")
     dietary_restrictions_other: str | None = Field(default=None, alias="Other Dietary")
     dietary_restrictions: list[DietaryRestriction] | None = Field(
         default=None, alias="Dietary Restrictions"
@@ -128,7 +128,8 @@ class Attendee(BaseModel):
 
     def getAirtableFields(self):
         fields_dict = self.dict(
-            exclude={"airtable_id", "cf_turnstile_response"},
+            # exclude={"airtable_id", "token"},
+            exclude={"airtable_id"},
             by_alias=True,
         )
         enum_list_fields = [
