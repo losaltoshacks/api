@@ -105,8 +105,8 @@ async def add_attendee(
     res = table.create(attendee.getAirtableFields())
     attendee_id = res["id"]
 
-    # Tokens expire in 24 hours
-    expire_delta = timedelta(minutes=1440)
+    # Tokens expire in 6 weeks
+    expire_delta = timedelta(weeks=6)
     student_token = create_jwt(
         {"id": attendee_id, "type": "student"}, expires_delta=expire_delta
     )
