@@ -50,5 +50,5 @@ async def verify_email(token: str, table: Table = Depends(get_table)):
     except:
         # attendee does not exist
         e = HTTPException(status_code=403, detail="Invalid attendee ID.")
-        capture_message(detail="Invalid attendee ID.")
+        capture_message("Invalid attendee ID.")
         raise e
