@@ -109,7 +109,7 @@ class Attendee(BaseModel):
     hackathons: int = Field(alias="Number of Previous Hackathons Attended")
     last_name: str = Field(alias="Last Name")
     linkedin: str | None = Query(
-        regex="^(http(s)?:\/\/)?([\w]+\.)?linkedin\.com\/(pub|in|profile)\/(.*)$",
+        # regex="^(http(s)?:\/\/)?([\w]+\.)?linkedin\.com\/(pub|in|profile)\/(.*)$",
         default=None,
         alias="LinkedIn",
     )
