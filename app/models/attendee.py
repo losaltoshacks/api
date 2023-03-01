@@ -30,6 +30,7 @@ def enumListToStringVals(listOfEnums):
 
 # Enums ======================
 class Grade(str, Enum):
+    seventh = "7th Grade"
     eighth = "8th Grade"
     ninth = "9th Grade"
     tenth = "10th Grade"
