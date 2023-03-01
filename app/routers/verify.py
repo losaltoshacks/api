@@ -12,7 +12,8 @@ async def verify_email(token: str, table: Table = Depends(get_table)):
     # token is invalid or expired
     if not verify_jwt(token):
         e = HTTPException(
-            status_code=403, detail="Invalid or expired verification link."
+            status_code=403,
+            detail="Expired or invalid verification link. Please try registering again!",
         )
         capture_message("Invalid or expired verification link.")
         raise e
