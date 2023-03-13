@@ -13,3 +13,14 @@ async def get_table():
     table = Table(AIRTABLE_KEY, BASE, TABLE)
 
     return table
+
+async def get_mobile_table():
+    load_dotenv()
+
+    AIRTABLE_KEY = os.getenv("AIRTABLE_KEY", default="")
+    MOBILE_BASE = os.getenv("MOBILE_BASE", default="")
+    MOBILE_TABLE = os.getenv("MOBILE_TABLE", default="")
+
+    table = Table(AIRTABLE_KEY, MOBILE_BASE, MOBILE_TABLE)
+
+    return table

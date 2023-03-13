@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+from app.routers import mobile
 from .routers import register, verify, attendees
 from .auth import auth_handler
 from dotenv import load_dotenv
@@ -39,3 +41,4 @@ app.include_router(auth_handler.router)
 app.include_router(register.router)
 app.include_router(attendees.router)
 app.include_router(verify.router)
+app.include_router(mobile.router)
