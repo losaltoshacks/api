@@ -176,13 +176,15 @@ def recordToAttendee(airtableRecord):
     fields = airtableRecord["fields"]
     return Attendee(
         airtable_id=airtableRecord["id"],
-        age=int(fields("Age")),
-        outreach=strToEnumList(fields["Outreach Methods"], Outreach),
+        age=int(fields["Age"]),
+        outreach=(
+            strToEnumList(fields["Outreach Methods"], Outreach) if "Outreach Methods" in fields.keys() else []
+        ),
         outreach_other=(
             fields["Other Outreach"] if "Other Outreach" in fields.keys() else None
         ),
-        dietary_restrictions=strToEnumList(
-            fields["Dietary Restrictions"], DietaryRestriction
+        dietary_restrictions=(
+            strToEnumList(fields["Dietary Restrictions"], DietaryRestriction) if "Dietary Restrictions" in fields.keys() else []
         ),
         dietary_restrictions_other=(
             fields["Other Dietary"] if "Other Dietary" in fields.keys() else None
@@ -201,7 +203,7 @@ def recordToAttendee(airtableRecord):
         last_name=fields["Last Name"],
         linkedin=(fields["LinkedIn"] if "LinkedIn" in fields.keys() else None),
         parent_email=fields["Parent/Guardian Email Address"],
-        parent_name=fields["Parent/Guardian First Name"],
+        parent_name=fields["Parent/Guardian Name"],
         parent_tel=fields["Parent/Guardian Phone Number"],
         school_name=fields["School"],
         school_address=fields["School Address"],
