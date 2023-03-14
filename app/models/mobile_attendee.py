@@ -2,12 +2,12 @@ from email.policy import default
 from pydantic import BaseModel, Field
 
 class MobileAttendee(BaseModel):
-    airtable_id: str
+    airtable_id: str | None = Field(default=None)
     reg_id: str
     meals: list[str] = Field(default=[])
     signed_in: bool = Field(default=False)
 
-    def getAirtableFields():
+    def getAirtableFields(self):
         return self.dict(
             exclude={"airtable_id"}
         )

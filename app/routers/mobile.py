@@ -1,9 +1,8 @@
-from inspect import getmembers
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends
 from pyairtable.api.table import Table
 from ..dependencies import get_mobile_table
 from ..auth.auth_bearer import JWTBearer
-from ..models.mobile_attendee import recordToMobileAttendee
+from ..models.mobile_attendee import MobileAttendee, recordToMobileAttendee
 
 router = APIRouter(
     prefix="/mobile", tags=["mobile"], dependencies=[Depends(JWTBearer())]
@@ -18,7 +17,14 @@ async def get_all_attendees(table: Table = Depends(get_mobile_table)):
 
     return res
 
+# get raw data from airtable
 @router.get("/raw")
-async def get_all_attendees_raw(request: Request, table: Table = Depends(get_mobile_table)):
-    print(request.url._url.removesuffix(request.url.path))
+async def get_all_attendees_raw(table: Table = Depends(get_mobile_table)):
     return table.all()
+
+# add new attendee
+@router.post("/add")
+async def add_attendee(attendee: MobileAttendee, table: Table = Depends(get_mobile_table)):
+    # TODO: add input verification?
+    res = table.create(attendee.getAirtableFields())
+    return res

@@ -19,7 +19,6 @@ async def get_all_attendees(table: Table = Depends(get_table)):
 
     return res
 
-
 @router.get("/raw")
 async def get_all_attendees_raw(request: Request, table: Table = Depends(get_table)):
     print(request.url._url.removesuffix(request.url.path))
