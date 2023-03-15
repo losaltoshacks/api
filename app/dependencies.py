@@ -2,7 +2,6 @@ from pyairtable.api.table import Table
 import os
 from dotenv import load_dotenv
 
-
 async def get_table():
     load_dotenv()
 
