@@ -99,6 +99,7 @@ class Attendee(BaseModel):
     dietary_restrictions: list[DietaryRestriction] | None = Field(
         default=None, alias="Dietary Restrictions"
     )
+    discord_id: str | None = Field(default=None, alias="Discord ID")
     email: str = Field(alias="Email")
     ethnicity_other: str | None = Field(default=None, alias="Other Ethnicity")
     ethnicity: list[Ethnicity] = Field(alias="Ethnicity")
@@ -189,6 +190,7 @@ def recordToAttendee(airtableRecord):
         dietary_restrictions_other=(
             fields["Other Dietary"] if "Other Dietary" in fields.keys() else None
         ),
+        discord_id=(fields["Discord ID"] if "Discord ID" in fields.keys() else None),
         email=fields["Email"],
         ethnicity=strToEnumList(fields["Ethnicity"], Ethnicity),
         ethnicity_other=(

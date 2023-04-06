@@ -39,7 +39,7 @@ async def update_attendee(
     try:
         return table.update(attendee_id, updated_attendee.getUpdatedAirtableFields())
     except:
-        raise HTTPException(status_code=403, detail="Updating attendee failed")
+        raise HTTPException(status_code=500, detail="Updating attendee failed")
 
 
 # get specific attendee attribute
