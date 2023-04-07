@@ -17,7 +17,7 @@ HASHED_PASSWORD = base64.b64decode(
     getenv("B64_HASHED_PASSWORD", default="failed").encode("ascii")
 ).decode("ascii")
 USERNAME = getenv("LOGIN_USER")
-ACCESS_TOKEN_EXPIRE_MINUTES = 1440  # 24 hours
+ACCESS_TOKEN_EXPIRE_MINUTES = 10080  # 1 week
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
