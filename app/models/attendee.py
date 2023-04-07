@@ -92,8 +92,9 @@ class Outreach(str, Enum):
 
 # Classes ====================
 class Attendee(BaseModel):
+    # airtable_id: str | None = Field(default=None, alias="id")
+    uuid: str = Field(alias="UUID")
     age: int = Field(alias="Age")
-    airtable_id: str | None = Field(default=None, alias="id")
     # token: str = Field(alias="reCAPTCHA Token")
     dietary_restrictions_other: str | None = Field(default=None, alias="Other Dietary")
     dietary_restrictions: list[DietaryRestriction] | None = Field(
@@ -176,7 +177,8 @@ class UpdatedAttendee(Attendee, metaclass=AllOptional):
 def recordToAttendee(airtableRecord):
     fields = airtableRecord["fields"]
     return Attendee(
-        airtable_id=airtableRecord["id"],
+        # airtable_id=airtableRecord["id"],
+        uuid=fields["UUID"],
         age=int(fields["Age"]),
         outreach=(
             strToEnumList(fields["Outreach Methods"], Outreach) if "Outreach Methods" in fields.keys() else []

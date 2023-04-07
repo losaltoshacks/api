@@ -1,5 +1,8 @@
 from fastapi import APIRouter, HTTPException, Depends, Request
 from pyairtable.api.table import Table
+from pyairtable.formulas import match
+
+from app.utilities import get_attendee_by_uuid
 from ..models.attendee import UpdatedAttendee
 from ..models.attendee import recordToAttendee
 from ..dependencies import get_registration_table
@@ -21,13 +24,13 @@ async def get_all_attendees(table: Table = Depends(get_registration_table)):
 
 @router.get("/raw")
 async def get_all_attendees_raw(request: Request, table: Table = Depends(get_registration_table)):
-    print(request.url._url.removesuffix(request.url.path))
     return table.all()
 
 
 @router.post("/delete")
 async def delete_attendee(attendee_id: str, table: Table = Depends(get_registration_table)):
-    return table.delete(attendee_id)
+    attendee_airtable_id = get_attendee_by_uuid(attendee_id, table)["id"]
+    return table.delete(attendee_airtable_id)
 
 
 @router.post("/update")
@@ -36,8 +39,9 @@ async def update_attendee(
     updated_attendee: UpdatedAttendee,
     table: Table = Depends(get_registration_table),
 ):
+    attendee_airtable_id = get_attendee_by_uuid(attendee_id, table)["id"]
     try:
-        return table.update(attendee_id, updated_attendee.getUpdatedAirtableFields())
+        return table.update(attendee_airtable_id, updated_attendee.getUpdatedAirtableFields())
     except:
         raise HTTPException(status_code=500, detail="Updating attendee failed")
 
@@ -48,10 +52,11 @@ async def update_attendee(
 async def get_attendee_attribute(
     attendee_id: str, field_name: str, table: Table = Depends(get_registration_table)
 ):
-    return getattr(recordToAttendee(table.get(attendee_id)), field_name)
+    attendee = get_attendee_by_uuid(attendee_id, table)
+    return getattr(recordToAttendee(attendee), field_name)
 
 
 # get specific attendee
 @router.get("/{attendee_id}")
 async def get_attendee(attendee_id: str, table: Table = Depends(get_registration_table)):
-    return recordToAttendee(table.get(attendee_id))
+    return recordToAttendee(get_attendee_by_uuid(attendee_id, table))
