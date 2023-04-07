@@ -4,7 +4,7 @@ from postmarker.core import PostmarkClient
 from ..models.attendee import Attendee
 from fastapi import APIRouter, HTTPException, Depends, Request
 from pyairtable.api.table import Table
-from ..dependencies import get_table
+from ..dependencies import get_registration_table
 from email_validator import validate_email, EmailNotValidError
 from datetime import timedelta
 import requests
@@ -49,7 +49,7 @@ domain_validator = EmailDomainValidator()
 
 @router.post("/attendee")
 async def add_attendee(
-    attendee: Attendee, request: Request, table: Table = Depends(get_table)
+    attendee: Attendee, request: Request, table: Table = Depends(get_registration_table)
 ):
     # Check if the reCAPTCHA token is valid
     # recaptcha = requests.post(

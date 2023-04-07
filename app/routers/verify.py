@@ -5,7 +5,7 @@ from sentry_sdk import capture_message
 
 from app.auth.auth_bearer import JWTBearer
 from app.routers.attendees import update_attendee
-from ..dependencies import get_mobile_table, get_table
+from ..dependencies import get_mobile_table, get_registration_table
 from ..auth.auth_handler import verify_jwt, decode_jwt
 from ..models.attendee import UpdatedAttendee, recordToAttendee
 
@@ -46,7 +46,7 @@ async def verify_discord(
 
 
 @router.get("/{token}")
-async def verify_email(token: str, table: Table = Depends(get_table)):
+async def verify_email(token: str, table: Table = Depends(get_registration_table)):
     # token is invalid or expired
     if not verify_jwt(token):
         e = HTTPException(

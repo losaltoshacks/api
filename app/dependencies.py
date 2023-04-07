@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 
 # registration table
-async def get_table():
+async def get_registration_table():
     load_dotenv()
 
     AIRTABLE_KEY = os.getenv("AIRTABLE_KEY", default="")
@@ -14,19 +14,20 @@ async def get_table():
 
     return table
 
+# check-in/mobile table
 async def get_mobile_table():
     load_dotenv()
 
     AIRTABLE_KEY = os.getenv("AIRTABLE_KEY", default="")
-    MOBILE_BASE = os.getenv("MOBILE_BASE", default="")
-    MOBILE_TABLE = os.getenv("MOBILE_TABLE", default="")
+    CHECK_IN_BASE = os.getenv("CHECK_IN_BASE", default="")
+    CHECK_IN_TABLE = os.getenv("CHECK_IN_TABLE", default="")
 
-    table = Table(AIRTABLE_KEY, MOBILE_BASE, MOBILE_TABLE)
+    table = Table(AIRTABLE_KEY, CHECK_IN_BASE, CHECK_IN_TABLE)
 
     return table
 
 # "Guaranteed Admissions" Table
-async def get_admit_table():
+async def get_admissions_table():
     load_dotenv()
 
     AIRTABLE_KEY = os.getenv("AIRTABLE_KEY", default="")
