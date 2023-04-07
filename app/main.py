@@ -1,8 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import mobile
-from .routers import register, verify, attendees
+from app.routers import helpers, mobile, register, verify, attendees
 from .auth import auth_handler
 from dotenv import load_dotenv
 import sentry_sdk
@@ -42,3 +41,4 @@ app.include_router(register.router)
 app.include_router(attendees.router)
 app.include_router(verify.router)
 app.include_router(mobile.router)
+app.include_router(helpers.router)
