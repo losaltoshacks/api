@@ -5,19 +5,22 @@ from sentry_sdk import capture_message
 
 from app.auth.auth_bearer import JWTBearer
 from app.routers.attendees import update_attendee
-from ..dependencies import get_table
+from ..dependencies import get_mobile_table, get_table
 from ..auth.auth_handler import verify_jwt, decode_jwt
 from ..models.attendee import UpdatedAttendee, recordToAttendee
 
 router = APIRouter(prefix="/verify", tags=["verify"])
 
+
 @router.get("/discord", dependencies=[Depends(JWTBearer())])
-async def verify_discord(email: str, disc_username: str, table: Table = Depends(get_table)):
+async def verify_discord(
+    email: str, disc_username: str, table: Table = Depends(get_mobile_table)
+):
     res = []
     for i in table.all(formula=match({"Email": email})):
         res.append(recordToAttendee(i))
 
-    if len(res) == 0: 
+    if len(res) == 0:
         e = HTTPException(
             status_code=400,
             detail="No user with specified email found.",
@@ -25,7 +28,7 @@ async def verify_discord(email: str, disc_username: str, table: Table = Depends(
         capture_message("No user with specified email found.")
         raise e
     else:
-        user = res[0] 
+        user = res[0]
         if user.discord_id:
             e = HTTPException(
                 status_code=400,
@@ -39,7 +42,8 @@ async def verify_discord(email: str, disc_username: str, table: Table = Depends(
         except:
             raise HTTPException(status_code=500, detail="Updating attendee failed")
 
-    return f'Username {disc_username} sucessfully set'
+    return user.first_name, user.last_name
+
 
 @router.get("/{token}")
 async def verify_email(token: str, table: Table = Depends(get_table)):
@@ -87,4 +91,3 @@ async def verify_email(token: str, table: Table = Depends(get_table)):
         e = HTTPException(status_code=403, detail="Invalid attendee ID.")
         capture_message("Invalid attendee ID.")
         raise e
-
