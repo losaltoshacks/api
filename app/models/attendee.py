@@ -2,31 +2,7 @@ from pydantic import BaseModel, Field
 from pydantic.main import ModelMetaclass
 from enum import Enum
 from fastapi import Query
-
-
-# Helper Functions ===========
-# listOfNames is an array containing the string values of an enum class, type is an Enum class
-def strToEnumList(listOfNames, type):
-    res = []
-
-    for val in listOfNames:
-        try:
-            res.append(type(val))
-        except:
-            continue  # TODO: see if this ever gets called?
-    return res
-
-
-def enumListToStringVals(listOfEnums):
-    res = []
-
-    for val in listOfEnums:
-        try:
-            res.append(val.value)
-        except:
-            continue  # TODO: see if this ever gets called?
-    return res
-
+from app.utilities import strToEnumList, enumListToStringVals
 
 # Enums ======================
 class Grade(str, Enum):
@@ -129,8 +105,6 @@ class Attendee(BaseModel):
 
     def getAirtableFields(self):
         fields_dict = self.dict(
-            # exclude={"airtable_id", "token"},
-            exclude={"airtable_id"},
             by_alias=True,
         )
         enum_list_fields = [

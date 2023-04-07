@@ -9,3 +9,24 @@ def get_attendee_by_uuid(attendee_uuid: str, table: Table):
     if attendee == None:
         raise HTTPException(status_code=400, detail="No attendee with that ID exists.")
     return attendee
+
+# listOfNames is an array containing the string values of an enum class, type is an Enum class
+def strToEnumList(listOfNames, type):
+    res = []
+    for val in listOfNames:
+        try:
+            res.append(type(val))
+        except:
+            continue  # TODO: see if this ever gets called?
+    return res
+
+# converts a list of enums to their string value equivalent
+def enumListToStringVals(listOfEnums):
+    res = []
+
+    for val in listOfEnums:
+        try:
+            res.append(val.value)
+        except:
+            continue  # TODO: see if this ever gets called?
+    return res
