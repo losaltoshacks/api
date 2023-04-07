@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends
 from pyairtable.api.table import Table
+from app.utilities import get_attendee_by_uuid
 from ..dependencies import get_mobile_table
 from ..auth.auth_bearer import JWTBearer
 from ..models.mobile_attendee import MobileAttendee, recordToMobileAttendee
@@ -32,45 +33,48 @@ async def add_attendee(attendee: MobileAttendee, table: Table = Depends(get_mobi
 # get specific attendee
 @router.get("/{attendee_id}")
 async def get_attendee(attendee_id: str, table: Table = Depends(get_mobile_table)):
-    return recordToMobileAttendee(table.get(attendee_id))
+    return recordToMobileAttendee(get_attendee_by_uuid(attendee_id, table))
 
 # get attendee properties
 @router.get("/{attendee_id}/signed_in")
 async def check_attendee_signed_in(attendee_id: str, table: Table = Depends(get_mobile_table)):
-    return recordToMobileAttendee(table.get(attendee_id)).signed_in
+    return recordToMobileAttendee(get_attendee_by_uuid(attendee_id, table)).signed_in
 
 @router.get("/{attendee_id}/meals")
 async def get_attendee_meals(attendee_id: str, table: Table = Depends(get_mobile_table)):
-    return recordToMobileAttendee(table.get(attendee_id)).meals
+    return recordToMobileAttendee(get_attendee_by_uuid(attendee_id, table)).meals
 
 @router.get("/{attendee_id}/meals/{meal}")
 async def check_attendee_meal(attendee_id: str, meal: str, table: Table = Depends(get_mobile_table)):
-    return meal in recordToMobileAttendee(table.get(attendee_id)).meals
+    return meal in recordToMobileAttendee(get_attendee_by_uuid(attendee_id, table)).meals
 
 # update attendee properties
 @router.post("/update/{attendee_id}/signed_in") 
 async def change_attendee_signed_in(attendee_id: str, signed_in: bool, table: Table = Depends(get_mobile_table)):
+    attendee_airtable_id = get_attendee_by_uuid(attendee_id, table)["id"]
     try:
-        return table.update(attendee_id, {"signed_in": signed_in})
+        return table.update(attendee_airtable_id, {"signed_in": signed_in})
     except:
         raise HTTPException(status_code=403, detail="Setting signed_in failed")
 
 @router.post("/update/{attendee_id}/meals/add") 
 async def add_attendee_meals(attendee_id: str, meals: list[str], table: Table = Depends(get_mobile_table)):
-    old_meals = recordToMobileAttendee(table.get(attendee_id)).meals
+    attendee = get_attendee_by_uuid(attendee_id, table)
+    old_meals = recordToMobileAttendee(attendee).meals
     new_meals = old_meals + [meal for meal in meals if meal not in old_meals]
 
     try:
-        return table.update(attendee_id, {"meals": new_meals})
+        return table.update(attendee["id"], {"meals": new_meals})
     except:
         raise HTTPException(status_code=403, detail="Adding meals failed")
     
 @router.post("/update/{attendee_id}/meals/remove") 
 async def remove_attendee_meals(attendee_id: str, meals: list[str], table: Table = Depends(get_mobile_table)):
-    old_meals = recordToMobileAttendee(table.get(attendee_id)).meals
+    attendee = get_attendee_by_uuid(attendee_id, table)
+    old_meals = recordToMobileAttendee(attendee).meals
     new_meals = [meal for meal in old_meals if meal not in meals]
 
     try:
-        return table.update(attendee_id, {"meals": new_meals})
+        return table.update(attendee["id"], {"meals": new_meals})
     except:
         raise HTTPException(status_code=403, detail="Removing meals failed")
