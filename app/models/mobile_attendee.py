@@ -5,6 +5,7 @@ class MobileAttendee(BaseModel):
     uuid: str
     meals: list[str] = Field(default=[])
     checked_in: bool = Field(default=False)
+    name: str
 
     def getAirtableFields(self):
         return self.dict(
@@ -16,5 +17,6 @@ def recordToMobileAttendee(airtableRecord):
     return MobileAttendee(
         uuid=fields["UUID"],
         meals=(fields["meals"] if "meals" in fields.keys() else []),
-        checked_in=(fields["checked_in"] if "checked_in" in fields.keys() else False)
+        checked_in=(fields["checked_in"] if "checked_in" in fields.keys() else False),
+        name=fields["Name"]
     )
