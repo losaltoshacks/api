@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 class MobileAttendee(BaseModel):
     uuid: str
     meals: list[str] = Field(default=[])
-    signed_in: bool = Field(default=False)
+    checked_in: bool = Field(default=False)
 
     def getAirtableFields(self):
         return self.dict(
@@ -16,5 +16,5 @@ def recordToMobileAttendee(airtableRecord):
     return MobileAttendee(
         uuid=fields["UUID"],
         meals=(fields["meals"] if "meals" in fields.keys() else []),
-        signed_in=(fields["signed_in"] if "signed_in" in fields.keys() else False)
+        checked_in=(fields["checked_in"] if "checked_in" in fields.keys() else False)
     )

@@ -36,9 +36,9 @@ async def get_attendee(attendee_id: str, table: Table = Depends(get_mobile_table
     return recordToMobileAttendee(get_attendee_by_uuid(attendee_id, table))
 
 # get attendee properties
-@router.get("/{attendee_id}/signed_in")
-async def check_attendee_signed_in(attendee_id: str, table: Table = Depends(get_mobile_table)):
-    return recordToMobileAttendee(get_attendee_by_uuid(attendee_id, table)).signed_in
+@router.get("/{attendee_id}/checked_in")
+async def check_attendee_checked_in(attendee_id: str, table: Table = Depends(get_mobile_table)):
+    return recordToMobileAttendee(get_attendee_by_uuid(attendee_id, table)).checked_in
 
 @router.get("/{attendee_id}/meals")
 async def get_attendee_meals(attendee_id: str, table: Table = Depends(get_mobile_table)):
@@ -49,13 +49,13 @@ async def check_attendee_meal(attendee_id: str, meal: str, table: Table = Depend
     return meal in recordToMobileAttendee(get_attendee_by_uuid(attendee_id, table)).meals
 
 # update attendee properties
-@router.post("/update/{attendee_id}/signed_in") 
-async def change_attendee_signed_in(attendee_id: str, signed_in: bool, table: Table = Depends(get_mobile_table)):
+@router.post("/update/{attendee_id}/checked_in") 
+async def change_attendee_checked_in(attendee_id: str, checked_in: bool, table: Table = Depends(get_mobile_table)):
     attendee_airtable_id = get_attendee_by_uuid(attendee_id, table)["id"]
     try:
-        return table.update(attendee_airtable_id, {"signed_in": signed_in})
+        return table.update(attendee_airtable_id, {"checked_in": checked_in})
     except:
-        raise HTTPException(status_code=403, detail="Setting signed_in failed")
+        raise HTTPException(status_code=403, detail="Setting checked_in failed")
 
 @router.post("/update/{attendee_id}/meals/add") 
 async def add_attendee_meals(attendee_id: str, meals: list[str], table: Table = Depends(get_mobile_table)):
