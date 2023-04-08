@@ -8,6 +8,7 @@ from app.routers.attendees import update_attendee
 from ..dependencies import get_mobile_table, get_registration_table
 from ..auth.auth_handler import verify_jwt, decode_jwt
 from ..models.attendee import UpdatedAttendee, recordToAttendee
+from app.utilities import get_attendee_by_uuid
 
 router = APIRouter(prefix="/verify", tags=["verify"])
 
@@ -38,7 +39,8 @@ async def verify_discord(
             raise e
 
         try:
-            table.update(user.airtable_id, {"Discord ID": disc_username})
+            attendee_airtable_id = get_attendee_by_uuid(user.uuid, table)["id"]
+            table.update(attendee_airtable_id, {"Discord ID": disc_username})
         except:
             raise HTTPException(status_code=500, detail="Updating attendee failed")
 
