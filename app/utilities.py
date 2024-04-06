@@ -10,6 +10,12 @@ def get_attendee_by_uuid(attendee_uuid: str, table: Table):
         raise HTTPException(status_code=400, detail="No attendee with that ID exists.")
     return attendee
 
+def get_attendee_ref_by_email(email: str, firestore):
+    doc_ref = firestore.collection("messages").document(email)
+    if doc_ref.get().exists:
+        return doc_ref
+    raise HTTPException(status_code=400, detail="No attendee with that email exists.")
+
 # listOfNames is an array containing the string values of an enum class, type is an Enum class
 def strToEnumList(listOfNames, type):
     res = []
