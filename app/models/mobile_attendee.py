@@ -20,7 +20,7 @@ def firebaseToMobileAttendee(d):
     return MobileAttendee(
         email=d["form_response"]["answers"][2]["email"],
         checked_in=(d["checked"] == "in" if "checked" in d.keys() else False),
-        meals=(d["meals"].split(",") if "meals" in d.keys() else []),
+        meals=(d["meals"].split(",") if "meals" in d.keys() and d["meals"] != "" else []),
         name=d["form_response"]["answers"][0]["text"] + " " + d["form_response"]["answers"][1]["text"],
         dietary=dietary
     )
