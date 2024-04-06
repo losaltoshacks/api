@@ -64,7 +64,7 @@ async def change_attendee_checked_in(email: str, checked_in: bool, firestore=Dep
 async def add_attendee_meals(email: str, meals: list[str], firestore=Depends(get_firestore_client)):
     doc_ref = get_attendee_ref_by_email(email, firestore)
     old_meals = firebaseToMobileAttendee(doc_ref.get().to_dict()).meals
-    if old_meals[0] == "":
+    if len(old_meals) > 0 and old_meals[0] == "":
         old_meals = []
     new_meals = old_meals + [meal for meal in meals if meal not in old_meals and meal != ""]
 
