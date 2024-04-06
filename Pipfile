@@ -17,6 +17,7 @@ email-validator = "*"
 sentry-sdk = {extras = ["fastapi"], version = "*"}
 gunicorn = "*"
 firebase-admin = "*"
+pydantic = "*"
 
 [dev-packages]
 python-dotenv = "*"

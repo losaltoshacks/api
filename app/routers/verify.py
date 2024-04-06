@@ -4,10 +4,8 @@ from pyairtable.formulas import match
 from sentry_sdk import capture_message
 
 from app.auth.auth_bearer import JWTBearer
-from app.routers.attendees import update_attendee
 from ..dependencies import get_mobile_table, get_registration_table, get_firestore_client
 from ..auth.auth_handler import verify_jwt, decode_jwt
-from ..models.attendee import UpdatedAttendee, recordToAttendee
 from app.utilities import get_attendee_by_uuid
 
 router = APIRouter(prefix="/verify", tags=["verify"])

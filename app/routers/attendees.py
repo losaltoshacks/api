@@ -3,9 +3,9 @@ from pyairtable.api.table import Table
 from pyairtable.formulas import match
 
 from app.utilities import get_attendee_by_uuid
-from ..models.attendee import UpdatedAttendee
+# from ..models.attendee import UpdatedAttendee
 from ..models.attendee import recordToAttendee
-from ..dependencies import get_registration_table
+from ..dependencies import get_registration_table, get_firestore_client
 from ..auth.auth_bearer import JWTBearer
 
 router = APIRouter(
@@ -33,17 +33,17 @@ async def delete_attendee(attendee_id: str, table: Table = Depends(get_registrat
     return table.delete(attendee_airtable_id)
 
 
-@router.post("/update")
-async def update_attendee(
-    attendee_id: str,
-    updated_attendee: UpdatedAttendee,
-    table: Table = Depends(get_registration_table),
-):
-    attendee_airtable_id = get_attendee_by_uuid(attendee_id, table)["id"]
-    try:
-        return table.update(attendee_airtable_id, updated_attendee.getUpdatedAirtableFields())
-    except:
-        raise HTTPException(status_code=500, detail="Updating attendee failed")
+# @router.post("/update")
+# async def update_attendee(
+#     attendee_id: str,
+#     updated_attendee: UpdatedAttendee,
+#     table: Table = Depends(get_registration_table),
+# ):
+#     attendee_airtable_id = get_attendee_by_uuid(attendee_id, table)["id"]
+#     try:
+#         return table.update(attendee_airtable_id, updated_attendee.getUpdatedAirtableFields())
+#     except:
+#         raise HTTPException(status_code=500, detail="Updating attendee failed")
 
 
 # get specific attendee attribute
@@ -57,6 +57,6 @@ async def get_attendee_attribute(
 
 
 # get specific attendee
-@router.get("/{attendee_id}")
-async def get_attendee(attendee_id: str, table: Table = Depends(get_registration_table)):
-    return recordToAttendee(get_attendee_by_uuid(attendee_id, table))
+@router.get("/{email}")
+async def get_attendee(email: str, firestore = Depends(get_firestore_client)):
+    return firestore.collection('messages').document(email).get().to_dict()

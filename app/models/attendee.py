@@ -1,5 +1,4 @@
 from pydantic import BaseModel, Field
-from pydantic.main import ModelMetaclass
 from enum import Enum
 from fastapi import Query
 from app.utilities import strToEnumList, enumListToStringVals
@@ -124,26 +123,26 @@ class Attendee(BaseModel):
         return fields_dict
 
 
-# metaclass for converting all parameters into optional ones
-class AllOptional(ModelMetaclass):
-    def __new__(mcls, name, bases, namespaces, **kwargs):
-        cls = super().__new__(mcls, name, bases, namespaces, **kwargs)
-        for field in cls.__fields__.values():
-            field.required = False
-        return cls
+# # metaclass for converting all parameters into optional ones
+# class AllOptional(ModelMetaclass):
+#     def __new__(mcls, name, bases, namespaces, **kwargs):
+#         cls = super().__new__(mcls, name, bases, namespaces, **kwargs)
+#         for field in cls.__fields__.values():
+#             field.required = False
+#         return cls
 
 
-# same as Attendee, but all parameters are optional
-class UpdatedAttendee(Attendee, metaclass=AllOptional):
-    # returns all fields that are not None
-    def getUpdatedAirtableFields(self):
-        fields_dict = self.getAirtableFields()
-        stripped_fields_dict = {}
-        for key, val in fields_dict.items():
-            if val is not None:
-                stripped_fields_dict[key] = val
-
-        return stripped_fields_dict
+# # same as Attendee, but all parameters are optional
+# class UpdatedAttendee(Attendee, metaclass=AllOptional):
+#     # returns all fields that are not None
+#     def getUpdatedAirtableFields(self):
+#         fields_dict = self.getAirtableFields()
+#         stripped_fields_dict = {}
+#         for key, val in fields_dict.items():
+#             if val is not None:
+#                 stripped_fields_dict[key] = val
+#
+#         return stripped_fields_dict
 
 
 def recordToAttendee(airtableRecord):
