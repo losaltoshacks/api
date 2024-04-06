@@ -11,7 +11,7 @@ from app.utilities import get_attendee_by_uuid
 router = APIRouter(prefix="/verify", tags=["verify"])
 
 
-@router.get("/discord")
+@router.get("/discord", dependencies=[Depends(JWTBearer())])
 async def verify_discord(
     email: str, disc_username: str, firestore = Depends(get_firestore_client)
 ):
