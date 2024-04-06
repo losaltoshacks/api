@@ -5,7 +5,7 @@ from sentry_sdk import capture_message
 
 from app.auth.auth_bearer import JWTBearer
 from app.routers.attendees import update_attendee
-from ..dependencies import get_mobile_table, get_registration_table
+from ..dependencies import get_mobile_table, get_registration_table, get_firestore_client
 from ..auth.auth_handler import verify_jwt, decode_jwt
 from ..models.attendee import UpdatedAttendee, recordToAttendee
 from app.utilities import get_attendee_by_uuid
@@ -13,15 +13,13 @@ from app.utilities import get_attendee_by_uuid
 router = APIRouter(prefix="/verify", tags=["verify"])
 
 
-@router.get("/discord", dependencies=[Depends(JWTBearer())])
+@router.get("/discord")
 async def verify_discord(
-    email: str, disc_username: str, table: Table = Depends(get_mobile_table)
+    email: str, disc_username: str, firestore = Depends(get_firestore_client)
 ):
-    res = []
-    for i in table.all(formula=match({"Email": email})):
-        res.append(recordToAttendee(i))
-
-    if len(res) == 0:
+    doc_ref = firestore.collection("messages").document(email)
+    doc = doc_ref.get()
+    if not doc.exists:
         e = HTTPException(
             status_code=400,
             detail="No user with specified email found.",
@@ -29,8 +27,7 @@ async def verify_discord(
         capture_message("No user with specified email found.")
         raise e
     else:
-        user = res[0]
-        if user.discord_id:
+        if "discord_id" in doc.to_dict():
             e = HTTPException(
                 status_code=400,
                 detail="Discord username already set.",
@@ -39,12 +36,13 @@ async def verify_discord(
             raise e
 
         try:
-            attendee_airtable_id = get_attendee_by_uuid(user.uuid, table)["id"]
-            table.update(attendee_airtable_id, {"Discord ID": disc_username})
+            doc_ref.update({"discord_id": disc_username})
         except:
             raise HTTPException(status_code=500, detail="Updating attendee failed")
 
-    return user.first_name, user.last_name
+    first_name = doc.to_dict()["form_response"]["answers"][0]["text"]
+    last_name = doc.to_dict()["form_response"]["answers"][1]["text"]
+    return first_name, last_name
 
 
 @router.get("/{token}")

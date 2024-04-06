@@ -1,6 +1,12 @@
 from pyairtable.api.table import Table
 import os
 from dotenv import load_dotenv
+import firebase_admin
+from firebase_admin import firestore
+
+default_app = firebase_admin.initialize_app()
+firestore_client = firestore.client()
+
 
 # registration table
 async def get_registration_table():
@@ -37,3 +43,8 @@ async def get_admissions_table():
     table = Table(AIRTABLE_KEY, CHECK_IN_BASE, ADMIT_TABLE)
 
     return table
+
+async def get_firestore_client():
+    load_dotenv()
+
+    return firestore_client
